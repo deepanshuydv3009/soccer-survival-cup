@@ -558,6 +558,7 @@
         let lastSpeechAt = 0;
         let lastSpeechText = '';
         let bgmMaster = null;
+        let speechGeneration = 0;
 
         // Load voices when available in browser
         function loadVoices() {
@@ -702,10 +703,7 @@
             if (cleanText === lastSpeechText && now - lastSpeechAt < cooldown) return;
             if (type === 'promo' && now - lastSpeechAt < 12000) return;
 
-            if (type === 'match') {
-                speechQueue = [];
-                stopCurrentSpeech();
-            } else if (currentSpeech || speechQueue.length > 0) {
+            if (currentSpeech || speechQueue.length > 0) {
                 return;
             }
 
@@ -714,6 +712,7 @@
         }
 
         function stopCurrentSpeech() {
+            speechGeneration += 1;
             if (audioVoice) {
                 audioVoice.pause();
                 audioVoice.currentTime = 0;
@@ -721,6 +720,7 @@
                 audioVoice = null;
             }
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            setBgmDuck(false);
             currentSpeech = null;
         }
 
@@ -748,49 +748,12 @@
             }, 40);
         }
 
-        function stopCurrentSpeech() {
-            if (audioVoice) {
-                audioVoice.pause();
-                audioVoice.currentTime = 0;
-                audioVoice.src = '';
-                audioVoice = null;
-            }
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-            currentSpeech = null;
-        }
-
-        function fallbackToSpeechSynthesis(item) {
-            if (!('speechSynthesis' in window)) {
-                currentSpeech = null;
-                processSpeechQueue();
-                return;
-            }
-            const fallbackVoice = new SpeechSynthesisUtterance(item.text);
-            currentSpeech = fallbackVoice;
-            setBgmDuck(true);
-            fallbackVoice.lang = 'en-US';
-            fallbackVoice.volume = 1;
-            fallbackVoice.voice = pickVoice(item.type === 'match' ? 'male' : 'female');
-            fallbackVoice.rate = item.type === 'match' ? 1.12 : 1.05;
-            fallbackVoice.onend = () => {
-                currentSpeech = null;
-                setBgmDuck(false);
-                processSpeechQueue();
-            };
-            fallbackVoice.onerror = () => {
-                currentSpeech = null;
-                setBgmDuck(false);
-                processSpeechQueue();
-            };
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(fallbackVoice);
-        }
-
         function processSpeechQueue() {
             if (currentSpeech || speechQueue.length === 0) return;
             if (!voiceUnlocked) return;
             const item = speechQueue.shift();
             if (!item) return;
+            const generation = ++speechGeneration;
             lastSpeechAt = performance.now();
             lastSpeechText = item.text;
 
@@ -803,22 +766,23 @@
             voice.volume = 1;
             setBgmDuck(true);
             voice.onended = function() {
+                if (generation !== speechGeneration) return;
                 currentSpeech = null;
                 audioVoice = null;
                 setBgmDuck(false);
                 processSpeechQueue();
             };
             voice.onerror = function() {
+                if (generation !== speechGeneration) return;
                 currentSpeech = null;
                 audioVoice = null;
                 setBgmDuck(false);
-                fallbackToSpeechSynthesis(item);
             };
             voice.play().catch(() => {
+                if (generation !== speechGeneration) return;
                 currentSpeech = null;
                 audioVoice = null;
                 setBgmDuck(false);
-                fallbackToSpeechSynthesis(item);
             });
         }
 
