@@ -699,6 +699,7 @@
         let availableVoices = [];
         let voicesReady = false;
         let voiceUnlocked = false;
+        let audioVoice = null;
         let introSpeechPending = false;
         let promoTimer = null;
         let crowdSupport = {};
@@ -934,57 +935,32 @@
         function processSpeechQueue() {
             if (currentSpeech || speechQueue.length === 0) return;
             if (!voiceUnlocked) return;
-            let item = speechQueue.shift();
+            const item = speechQueue.shift();
             if (!item) return;
 
             const subBox = document.getElementById('announcer-box');
             subBox.innerText = item.text;
 
-            if ('speechSynthesis' in window) {
-                if (window.speechSynthesis.speaking) {
-                    window.speechSynthesis.cancel();
-                }
-                const voice = new SpeechSynthesisUtterance(item.text);
-                currentSpeech = voice;
-                voice.lang = 'en-US';
-                voice.volume = 1;
-                
-                // Select different system voices based on type if available
-                if (availableVoices.length > 0) {
-                    if (item.type === 'promo') {
-                        // Use a brighter female voice for promo and intro lines
-                        voice.voice = pickVoice('female');
-                        voice.pitch = 1.05;
-                        voice.rate = 1.08;
-                    } else if (item.type === 'system') {
-                        voice.voice = pickVoice('female');
-                        voice.pitch = 1.02;
-                        voice.rate = 1.1;
-                    } else {
-                        // Pick a deep/energetic announcer voice for match events
-                        voice.voice = pickVoice('male');
-                        voice.pitch = 0.9;
-                        voice.rate = 1.18;
-                    }
-                }
-
-                if (!voicesReady && item.priority >= 2) {
-                    voice.rate = 1.25;
-                }
-
-                voice.onend = function() {
-                    currentSpeech = null;
-                    processSpeechQueue(); 
-                };
-                voice.onerror = function() {
-                    currentSpeech = null;
-                    processSpeechQueue();
-                };
-                window.speechSynthesis.speak(voice);
-            } else {
+            const speaker = item.type === 'match' ? 'Brian' : 'Amy';
+            const voice = new Audio(`https://api.streamelements.com/kappa/v2/speech?voice=${speaker}&text=${encodeURIComponent(item.text)}`);
+            audioVoice = voice;
+            currentSpeech = voice;
+            voice.volume = 1;
+            voice.onended = function() {
                 currentSpeech = null;
-                speechQueue = [];
-            }
+                audioVoice = null;
+                processSpeechQueue();
+            };
+            voice.onerror = function() {
+                currentSpeech = null;
+                audioVoice = null;
+                processSpeechQueue();
+            };
+            voice.play().catch(() => {
+                currentSpeech = null;
+                audioVoice = null;
+                processSpeechQueue();
+            });
         }
 
         const { Engine, Render, Runner, Bodies, Composite, Events, Body } = Matter;
@@ -1994,6 +1970,12 @@
             initCrowdSupport();
             speechQueue = [];
             currentSpeech = null;
+            if (audioVoice) {
+                audioVoice.pause();
+                audioVoice.currentTime = 0;
+                audioVoice.src = '';
+                audioVoice = null;
+            }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
