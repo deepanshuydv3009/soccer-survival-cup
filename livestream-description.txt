@@ -6,16 +6,6 @@ Welcome to Soccer Survival Cup LIVE!
 
 32 country teams enter the arena, but only one survives. Watch flags collide, dodge spinning blades, survive the storm ring, collect power-ups, and fight for the championship.
 
-Your live chat can change the match:
-Type !cheer CountryName
-Example: !cheer India
-
-You can also use:
-!boost Brazil
-!support USA
-
-Every valid country cheer gives that team extra protection. The Fan Podium shows which country has the strongest live support.
-
 This is an original fan-made interactive game experience for entertainment. It is not an official FIFA, Messi, Ronaldo, or national-team broadcast.
 
 Play the game:
@@ -26,4 +16,4 @@ Subscribe for more live soccer survival battles and interactive audience games.
 #SoccerSurvival #MessiVsRonaldo #LiveGaming #YouTubeLive #InteractiveGame
 
 PINNED COMMENT
-Choose your team and type !cheer followed by the country name. Which country will survive the arena?"
+Which country will survive the arena? Watch until the final collision."

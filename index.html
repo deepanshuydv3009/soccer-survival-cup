@@ -606,6 +606,70 @@
             }
         }
 
+        function scheduleSoccerBeat(time, step, master) {
+            const oscillator = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const downbeat = step % 8 === 0;
+            oscillator.type = downbeat ? 'sine' : 'triangle';
+            oscillator.frequency.setValueAtTime(downbeat ? 110 : 220, time);
+            oscillator.frequency.exponentialRampToValueAtTime(downbeat ? 48 : 120, time + 0.16);
+            gain.gain.setValueAtTime(0.001, time);
+            gain.gain.exponentialRampToValueAtTime(downbeat ? 0.28 : 0.08, time + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.18);
+            oscillator.connect(gain);
+            gain.connect(master);
+            oscillator.start(time);
+            oscillator.stop(time + 0.2);
+        }
+
+        function speakPromo(text) {
+            enqueueSpeech(text, 'promo', 1);
+        }
+
+        function speakMatch(text) {
+            enqueueSpeech(text, 'match', 3);
+        }
+
+        function speakSystem(text) {
+            enqueueSpeech(text, 'system', 2);
+        }
+
+        function pickVoice(preference) {
+            const englishVoices = availableVoices.filter(voice => voice.lang && voice.lang.toLowerCase().includes('en'));
+            return englishVoices[0] || availableVoices[0] || null;
+        }
+
+        function enqueueSpeech(text, type, priority) {
+            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!cleanText || !voiceUnlocked) return;
+
+            const now = performance.now();
+            const cooldown = type === 'promo' ? 30000 : type === 'system' ? 4500 : 1800;
+            if (cleanText === lastSpeechText && now - lastSpeechAt < cooldown) return;
+            if (type === 'promo' && now - lastSpeechAt < 12000) return;
+
+            if (type === 'match') {
+                speechQueue = [];
+                stopCurrentSpeech();
+            } else if (currentSpeech || speechQueue.length > 0) {
+                return;
+            }
+
+            speechQueue.push({ text: cleanText, type, priority, at: now });
+            processSpeechQueue();
+        }
+
+        function stopCurrentSpeech() {
+            if (audioVoice) {
+                audioVoice.pause();
+                audioVoice.currentTime = 0;
+                audioVoice.src = '';
+                audioVoice = null;
+            }
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            currentSpeech = null;
+        }
+
         function startSoccerBGM() {
             if (!audioCtx) return;
             if (bgmInterval) clearInterval(bgmInterval);
@@ -1526,7 +1590,6 @@
             document.getElementById('stat-cycle').innerText = 'MIN 1';
             document.getElementById('game-time').innerText = '00:00';
             document.getElementById('rule-text').innerText = 'Power-ups and storm ring enabled.';
-            document.getElementById('command-text').innerText = 'Type !cheer + your country to protect your team';
             const pauseButton = document.getElementById('pause-btn');
             if (pauseButton) pauseButton.innerText = 'Pause';
 
