@@ -241,133 +241,6 @@
             font-weight: 900;
         }
 
-        #fan-meter {
-            width: 90%;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            padding: 10px 14px;
-            border-radius: 16px;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .fan-label {
-            font-size: 13px;
-            letter-spacing: 1.6px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.72);
-            min-width: 120px;
-        }
-
-        .fan-bar {
-            flex: 1;
-            height: 10px;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.08);
-            overflow: hidden;
-        }
-
-        .fan-bar > div {
-            height: 100%;
-            width: 0%;
-            border-radius: 999px;
-            background: linear-gradient(90deg, #60efff, #00ff87, #f093fb);
-            box-shadow: 0 0 18px rgba(0,255,135,0.3);
-            transition: width 0.25s ease;
-        }
-
-        .fan-pick {
-            font-size: 13px;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            min-width: 120px;
-            text-align: right;
-        }
-
-        #live-command {
-            width: 90%;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 12px;
-            padding: 12px 16px;
-            border-left: 4px solid #ffb703;
-            background: rgba(255, 183, 3, 0.12);
-            color: #fff;
-            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24);
-        }
-
-        #live-command .command-kicker {
-            color: #ffb703;
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: 1.8px;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        #live-command .command-text {
-            font-size: 17px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
-        #live-status {
-            position: absolute;
-            top: 88px;
-            left: 30px;
-            z-index: 4;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: rgba(255,255,255,0.78);
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-        }
-
-        #live-status::before {
-            content: '';
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #ffb703;
-            box-shadow: 0 0 12px #ffb703;
-        }
-
-        #live-status.online::before { background: #00ff87; box-shadow: 0 0 12px #00ff87; }
-        #live-status.paused::before { background: #ff4757; box-shadow: 0 0 12px #ff4757; }
-
-        #support-leaderboard {
-            width: 90%;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            color: rgba(255,255,255,0.72);
-            font-size: 12px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .support-title { color: #60efff; font-weight: 900; white-space: nowrap; }
-        .support-team {
-            flex: 1;
-            min-width: 0;
-            padding: 8px 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            text-align: center;
-            border: 1px solid rgba(96,239,255,0.16);
-            background: rgba(0,0,0,0.32);
-        }
-
         #host-controls {
             position: absolute;
             right: 30px;
@@ -392,28 +265,23 @@
 
         .host-control:hover { border-color: #60efff; color: #fff; }
 
-        #live-moment {
-            position: absolute;
-            left: 50%;
-            bottom: 74px;
-            z-index: 4;
-            width: 78%;
-            transform: translateX(-50%);
-            padding: 9px 14px;
-            border-radius: 999px;
-            background: rgba(0,0,0,0.62);
-            border: 1px solid rgba(255,255,255,0.14);
-            color: #fff;
-            text-align: center;
-            font-size: 14px;
+        #arena-status {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            border: 1px solid rgba(96,239,255,0.2);
+            background: rgba(3, 12, 22, 0.52);
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
             font-weight: 800;
-            letter-spacing: 0.5px;
-            opacity: 0;
-            transition: opacity 0.25s ease;
-            pointer-events: none;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
         }
 
-        #live-moment.visible { opacity: 1; }
+        #arena-status span:last-child { color: #60efff; }
 
         #stats-bar {
             display: flex;
@@ -608,21 +476,7 @@
                 <div class="meta-pill"><span>Eliminations</span><span id="elim-count">0</span></div>
                 <div class="meta-pill"><span>Time</span><span id="game-time">00:00</span></div>
             </div>
-            <div id="fan-meter">
-                <div class="fan-label">Live chat boosts</div>
-                <div class="fan-bar"><div id="fan-bar-fill"></div></div>
-                <div class="fan-pick" id="fan-top">No leader</div>
-            </div>
-            <div id="live-command">
-                <div class="command-kicker">Chat power</div>
-                <div class="command-text" id="command-text">Type !cheer + your country to protect your team</div>
-            </div>
-            <div id="support-leaderboard">
-                <div class="support-title">Fan podium</div>
-                <div class="support-team" id="support-1">1. Waiting...</div>
-                <div class="support-team" id="support-2">2. Waiting...</div>
-                <div class="support-team" id="support-3">3. Waiting...</div>
-            </div>
+            <div id="arena-status"><span>Elimination arena</span><span>Power-ups active</span></div>
 
             <div id="stats-bar">
                 <div class="stat-card">
@@ -654,8 +508,6 @@
             <div id="elimination-feed"></div>
         </div>
 
-        <div id="live-status">Chat bridge standby</div>
-        <div id="live-moment"></div>
         <div id="host-controls">
             <button class="host-control" id="pause-btn" type="button">Pause</button>
             <button class="host-control" id="replay-btn" type="button">Replay</button>
@@ -702,10 +554,7 @@
         let audioVoice = null;
         let introSpeechPending = false;
         let promoTimer = null;
-        let crowdSupport = {};
         let isPaused = false;
-        let ytBridgeInitialized = false;
-        let liveMomentTimer = null;
         let lastSpeechAt = 0;
         let lastSpeechText = '';
 
@@ -750,7 +599,6 @@
                 audioCtx = null;
             }
             resetGame();
-            startYouTubeCommentBridge();
             if (voiceUnlocked) {
                 speakPromo("Welcome to Soccer Survival Cup. Instant action, instant drama, no dead air. Like and subscribe for more epic soccer battles!");
             } else {
@@ -779,174 +627,6 @@
                     step = (step + 1) % 16;
                 }
             }, 40);
-
-            promoTimer = setInterval(() => {
-                if (!isStarted || roundOver || !voiceUnlocked) return;
-                if (gameSeconds > 8 && balls.length > 6 && gameSeconds % 32 === 0) {
-                    speakPromo("Like and subscribe for more insane soccer survival battles!");
-                }
-            }, 2000);
-        }
-
-        function createNoiseBuffer(duration = 0.12) {
-            const length = Math.max(1, Math.floor(audioCtx.sampleRate * duration));
-            const buffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < length; i++) {
-                data[i] = (Math.random() * 2 - 1) * (1 - i / length);
-            }
-            return buffer;
-        }
-
-        function scheduleKick(time, master) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(110, time);
-            osc.frequency.exponentialRampToValueAtTime(44, time + 0.16);
-            gain.gain.setValueAtTime(0.001, time);
-            gain.gain.exponentialRampToValueAtTime(0.55, time + 0.01);
-            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.18);
-            osc.connect(gain);
-            gain.connect(master);
-            osc.start(time);
-            osc.stop(time + 0.19);
-        }
-
-        function scheduleSnare(time, master) {
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = createNoiseBuffer(0.14);
-            const filter = audioCtx.createBiquadFilter();
-            const gain = audioCtx.createGain();
-            filter.type = 'highpass';
-            filter.frequency.setValueAtTime(1100, time);
-            gain.gain.setValueAtTime(0.001, time);
-            gain.gain.exponentialRampToValueAtTime(0.35, time + 0.01);
-            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(master);
-            noise.start(time);
-            noise.stop(time + 0.13);
-        }
-
-        function scheduleHat(time, master, open = false) {
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = createNoiseBuffer(open ? 0.08 : 0.05);
-            const filter = audioCtx.createBiquadFilter();
-            const gain = audioCtx.createGain();
-            filter.type = 'highpass';
-            filter.frequency.setValueAtTime(open ? 7200 : 9200, time);
-            gain.gain.setValueAtTime(0.001, time);
-            gain.gain.exponentialRampToValueAtTime(open ? 0.09 : 0.05, time + 0.005);
-            gain.gain.exponentialRampToValueAtTime(0.001, time + (open ? 0.06 : 0.03));
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(master);
-            noise.start(time);
-            noise.stop(time + (open ? 0.07 : 0.04));
-        }
-
-        function scheduleBass(time, step, master) {
-            const bassNotes = [55, 49, 52, 58];
-            const note = bassNotes[Math.floor(step / 4) % bassNotes.length];
-            const osc = audioCtx.createOscillator();
-            const filter = audioCtx.createBiquadFilter();
-            const gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(note, time);
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(360, time);
-            gain.gain.setValueAtTime(0.001, time);
-            gain.gain.exponentialRampToValueAtTime(0.12, time + 0.01);
-            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.22);
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(master);
-            osc.start(time);
-            osc.stop(time + 0.24);
-        }
-
-        function scheduleSoccerBeat(time, step, master) {
-            const barStep = step % 16;
-            const isDownbeat = barStep === 0 || barStep === 8;
-            const isBackbeat = barStep === 4 || barStep === 12;
-
-            scheduleHat(time, master, barStep === 15);
-            if (barStep % 2 === 0) scheduleHat(time, master, false);
-            if (isDownbeat) scheduleKick(time, master);
-            if (isBackbeat) scheduleSnare(time, master);
-            if (barStep === 2 || barStep === 6 || barStep === 10 || barStep === 14) scheduleBass(time, step, master);
-
-            if (barStep === 0) {
-                const chant = audioCtx.createOscillator();
-                const chantGain = audioCtx.createGain();
-                chant.type = 'sawtooth';
-                chant.frequency.setValueAtTime(220, time);
-                chant.frequency.exponentialRampToValueAtTime(196, time + 0.4);
-                chantGain.gain.setValueAtTime(0.001, time);
-                chantGain.gain.exponentialRampToValueAtTime(0.02, time + 0.03);
-                chantGain.gain.exponentialRampToValueAtTime(0.001, time + 0.42);
-                chant.connect(chantGain);
-                chantGain.connect(master);
-                chant.start(time);
-                chant.stop(time + 0.43);
-            }
-        }
-
-        // Voice Type 1: Game Promotion / Intro (Warm / Hype voice)
-        function speakPromo(text) {
-            enqueueSpeech(text, 'promo', 1);
-        }
-
-        // Voice Type 2: Match Eliminations & Wins (Deep / Crisp Announcer voice)
-        function speakMatch(text) {
-            enqueueSpeech(text, 'match', 3);
-        }
-
-        function speakSystem(text) {
-            enqueueSpeech(text, 'system', 2);
-        }
-
-        function pickVoice(preference) {
-            if (!availableVoices.length) return null;
-
-            const voices = availableVoices.filter(v => v.lang && v.lang.toLowerCase().includes('en'));
-            const lowered = voices.map(v => ({ voice: v, name: (v.name || '').toLowerCase() }));
-
-            const femaleHints = ['female', 'samantha', 'zira', 'lisa', 'karen', 'aria', 'eva', 'victoria', 'susan', 'tessa', 'moira', 'serena', 'fiona', 'allison', 'emma', 'kathy', 'nicky', 'ava', 'heather'];
-            const maleHints = ['male', 'david', 'daniel', 'alex', 'tom', 'mark', 'george', 'john', 'uk english'];
-
-            if (preference === 'female') {
-                return lowered.find(entry => femaleHints.some(hint => entry.name.includes(hint)))?.voice || voices[0] || availableVoices[0];
-            }
-
-            if (preference === 'male') {
-                return lowered.find(entry => maleHints.some(hint => entry.name.includes(hint)))?.voice || voices[0] || availableVoices[0];
-            }
-
-            return voices[0] || availableVoices[0];
-        }
-
-        function enqueueSpeech(text, type, priority) {
-            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
-            if (!cleanText || !voiceUnlocked) return;
-
-            const now = performance.now();
-            const cooldown = type === 'promo' ? 30000 : type === 'system' ? 4500 : 1800;
-            if (cleanText === lastSpeechText && now - lastSpeechAt < cooldown) return;
-            if (type === 'promo' && now - lastSpeechAt < 12000) return;
-
-            const item = { text: cleanText, type, priority, at: now };
-            if (type === 'match') {
-                speechQueue = [];
-                stopCurrentSpeech();
-            } else if (currentSpeech || speechQueue.length > 0) {
-                return;
-            }
-
-            speechQueue.push(item);
-            processSpeechQueue();
         }
 
         function stopCurrentSpeech() {
@@ -1061,182 +741,6 @@
             return Math.max(min, Math.min(max, value));
         }
 
-        function initCrowdSupport() {
-            crowdSupport = {};
-            COUNTRY_DATA.forEach(country => {
-                crowdSupport[country.code] = 0;
-            });
-            updateCrowdUI();
-        }
-
-        function normalizeCommentText(text) {
-            return String(text || '')
-                .toLowerCase()
-                .replace(/[^a-z0-9\s]/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-            function showLiveMoment(text) {
-                const moment = document.getElementById('live-moment');
-                if (!moment) return;
-                moment.innerText = text;
-                moment.classList.add('visible');
-                clearTimeout(liveMomentTimer);
-                liveMomentTimer = setTimeout(() => moment.classList.remove('visible'), 3200);
-            }
-
-        function findCountryFromComment(text) {
-            const norm = normalizeCommentText(text);
-            if (!norm) return null;
-
-            const aliases = {
-                us: ['usa', 'us', 'united states', 'america'],
-                gb: ['england', 'uk', 'great britain', 'britain', 'united kingdom'],
-                kr: ['south korea', 'korea'],
-                sa: ['saudi arabia'],
-                za: ['south africa'],
-                s: []
-            };
-
-            for (const country of COUNTRY_DATA) {
-                const code = country.code.toLowerCase();
-                const name = country.name.toLowerCase();
-                const pool = [name, code].concat(aliases[code] || []);
-                if (pool.some(token => token && (norm === token || norm.includes(` ${token} `) || norm.startsWith(`${token} `) || norm.endsWith(` ${token}`)))) {
-                    return country;
-                }
-            }
-            return null;
-        }
-
-        function updateCrowdUI() {
-            const top = COUNTRY_DATA
-                .map(country => ({ country, score: crowdSupport[country.code] || 0 }))
-                .sort((a, b) => b.score - a.score)[0];
-
-            const topLabel = document.getElementById('fan-top');
-            const fill = document.getElementById('fan-bar-fill');
-            if (topLabel) {
-                topLabel.innerText = top && top.score > 0 ? `${top.country.name} ${top.score}` : 'No leader';
-            }
-            if (fill) {
-                const maxScore = Math.max(1, ...(COUNTRY_DATA.map(country => crowdSupport[country.code] || 0)));
-                const ratio = top && top.score > 0 ? (top.score / maxScore) : 0;
-                fill.style.width = `${Math.max(6, Math.round(ratio * 100))}%`;
-            }
-
-            const leaders = COUNTRY_DATA
-                .map(country => ({ country, score: crowdSupport[country.code] || 0 }))
-                .filter(entry => entry.score > 0)
-                .sort((a, b) => b.score - a.score || a.country.name.localeCompare(b.country.name));
-            [1, 2, 3].forEach((rank, index) => {
-                const podium = document.getElementById(`support-${rank}`);
-                const leader = leaders[index];
-                if (podium) podium.innerText = leader ? `${rank}. ${leader.country.name} ${leader.score}` : `${rank}. Waiting...`;
-            });
-        }
-
-        function applyCrowdBoost(countryCode, amount = 1) {
-            if (!countryCode) return;
-            if (crowdSupport[countryCode] == null) crowdSupport[countryCode] = 0;
-            crowdSupport[countryCode] += amount;
-            updateCrowdUI();
-            const country = COUNTRY_DATA.find(entry => entry.code === countryCode);
-            if (country) showLiveMoment(`${country.name} fan squad sent +${amount} protection`);
-
-            const ball = balls.find(entry => entry.country && entry.country.code === countryCode && !entry.isDying);
-            if (ball) {
-                const hpBoost = Math.min(12, amount * 1.5);
-                ball.hp = Math.min(ball.maxHp, ball.hp + hpBoost);
-                if ((crowdSupport[countryCode] % 5) === 0) {
-                    ball.shieldCharges = (ball.shieldCharges || 0) + 1;
-                }
-                const dx = ball.position.x - cx;
-                const dy = ball.position.y - cy;
-                const dist = Math.max(10, Math.sqrt(dx * dx + dy * dy));
-                const push = Math.min(0.00014, crowdSupport[countryCode] * 0.000006);
-                Body.applyForce(ball, ball.position, {
-                    x: (dx / dist) * push,
-                    y: (dy / dist) * push
-                });
-            }
-        }
-
-        function registerCrowdComment(commentText) {
-            const normalized = normalizeCommentText(commentText);
-            const commandMatch = normalized.match(/^(?:cheer|boost|support)\s+(.+)$/);
-            const country = findCountryFromComment(commandMatch ? commandMatch[1] : normalized);
-            if (!country) return null;
-            applyCrowdBoost(country.code, 1);
-            if (commandMatch) {
-                document.getElementById('command-text').innerText = `${country.name} activated by live chat`;
-                speakSystem(`${country.name} is getting a live chat boost.`);
-            }
-            return country;
-        }
-
-        window.registerCrowdComment = registerCrowdComment;
-
-        let ytBridgeSeq = 0;
-        let ytBridgeTimer = null;
-        let ytBridgeOnline = false;
-
-        async function pollYouTubeCommentBridge() {
-            try {
-                const response = await fetch(`http://127.0.0.1:8787/feed?since=${ytBridgeSeq}`, {
-                    cache: 'no-store',
-                    mode: 'cors'
-                });
-                if (!response.ok) return;
-
-                const data = await response.json();
-                const bridgeStatus = data.status?.bridgeStatus || 'offline';
-                ytBridgeOnline = bridgeStatus === 'online';
-                const statusLabel = document.getElementById('live-status');
-                if (statusLabel) {
-                    statusLabel.innerText = bridgeStatus === 'online' ? 'Live chat connected' : `Chat bridge ${bridgeStatus}`;
-                    statusLabel.classList.toggle('online', bridgeStatus === 'online');
-                    statusLabel.classList.toggle('paused', false);
-                }
-                if (typeof data.nextSeq === 'number') {
-                    ytBridgeSeq = data.nextSeq;
-                }
-
-                if (!ytBridgeInitialized) {
-                    ytBridgeInitialized = true;
-                    return;
-                }
-
-                const items = Array.isArray(data.items) ? data.items : [];
-                if (items.length > 0) {
-                    ytBridgeOnline = true;
-                }
-
-                items.forEach(item => {
-                    if (!item || !item.text) return;
-                    if (item.countryCode) {
-                        applyCrowdBoost(item.countryCode, 1);
-                    } else {
-                        registerCrowdComment(item.text);
-                    }
-                });
-            } catch (err) {
-                ytBridgeOnline = false;
-                const statusLabel = document.getElementById('live-status');
-                if (statusLabel && !isPaused) {
-                    statusLabel.innerText = 'Chat bridge offline';
-                    statusLabel.classList.remove('online');
-                }
-            }
-        }
-
-        function startYouTubeCommentBridge() {
-            if (ytBridgeTimer) return;
-            ytBridgeTimer = setInterval(pollYouTubeCommentBridge, 1500);
-            pollYouTubeCommentBridge();
-        }
-
         function setupHostControls() {
             const pauseButton = document.getElementById('pause-btn');
             const replayButton = document.getElementById('replay-btn');
@@ -1244,12 +748,6 @@
                 pauseButton.addEventListener('click', () => {
                     isPaused = !isPaused;
                     pauseButton.innerText = isPaused ? 'Resume' : 'Pause';
-                    const statusLabel = document.getElementById('live-status');
-                    if (statusLabel) {
-                        statusLabel.innerText = isPaused ? 'Match paused' : (ytBridgeOnline ? 'Live chat connected' : 'Match live');
-                        statusLabel.classList.toggle('paused', isPaused);
-                    }
-                    showLiveMoment(isPaused ? 'Host pause: chat can choose the next survivor' : 'Match resumed: pressure is back on');
                 });
             }
             if (replayButton) {
@@ -1257,7 +755,6 @@
                     isPaused = false;
                     if (pauseButton) pauseButton.innerText = 'Pause';
                     resetGame();
-                    showLiveMoment('Fresh bracket loaded: cheer for your country now');
                 });
             }
         }
@@ -1770,8 +1267,6 @@
                     const dx = cx - ball.position.x;
                     const dy = cy - ball.position.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    const crowdScore = crowdSupport[ball.country.code] || 0;
-
                     let pullStrength = 0.00003;
                     if (freezeActive) {
                         pullStrength *= 0.45;
@@ -1787,14 +1282,6 @@
                     }
                     if (!freezeActive && balls.length <= 2) {
                         pullStrength = 0.00038;
-                    }
-
-                    if (crowdScore > 0 && !freezeActive) {
-                        const crowdForce = Math.min(0.00014, crowdScore * 0.000004);
-                        Body.applyForce(ball, ball.position, {
-                            x: (-dx / dist) * crowdForce,
-                            y: (-dy / dist) * crowdForce
-                        });
                     }
 
                     if (dist > 15) {
@@ -2020,7 +1507,6 @@
             holeRadius = 55;
             hypeMeter = 0;
             isPaused = false;
-            initCrowdSupport();
             speechQueue = [];
             currentSpeech = null;
             if (audioVoice) {
