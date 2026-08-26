@@ -28,7 +28,7 @@
       position: absolute;
       inset: -3%;
       z-index: -3;
-      background: url('https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=2400&q=90') center / cover;
+      background: url('https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=3840&q=95') center / cover;
       filter: saturate(.9) contrast(1.05) brightness(.72);
       transform: scale(1.04);
       animation: slowCamera 24s ease-in-out infinite alternate;
@@ -163,6 +163,7 @@
       align-items: flex-start;
       justify-content: space-between;
       pointer-events: none;
+      display: none;
     }
     .brand { text-shadow: 0 2px 18px rgba(0,0,0,.7); }
     .eyebrow { margin-bottom: 8px; color: #dfc78a; font: 700 12px/1.2 Arial, sans-serif; letter-spacing: 3px; text-transform: uppercase; }
@@ -188,6 +189,7 @@
       transform: translateX(-50%);
       text-align: center;
       text-shadow: 0 2px 16px #000;
+      display: none;
     }
     .quote { margin: 0 0 16px; font-size: clamp(17px, 2vw, 26px); letter-spacing: .5px; }
     .control {
@@ -227,14 +229,6 @@
     <div class="dust"><i></i><i></i><i></i><i></i></div>
     <div class="candle one"></div><div class="candle two"></div><div class="candle three"></div>
     <div class="foreground"></div>
-    <header class="hud">
-      <div class="brand"><div class="eyebrow">Live ambient sanctuary</div><h1>Waterfall Stillness</h1></div>
-      <div class="live">LIVE AMBIENCE</div>
-    </header>
-    <footer class="bottom">
-      <p class="quote">Let the water carry the noise away.</p>
-      <button class="control" id="sound-toggle" type="button"><span>◉</span> Begin gentle sound</button>
-    </footer>
   </main>
   <script>
     let audioContext;
@@ -246,7 +240,7 @@
       ambienceStarted = true;
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       masterGain = audioContext.createGain();
-      masterGain.gain.value = 0.045;
+      masterGain.gain.value = 0.16;
       masterGain.connect(audioContext.destination);
 
       const notes = [196, 246.94, 293.66, 369.99];
@@ -255,7 +249,7 @@
         const gain = audioContext.createGain();
         oscillator.type = 'sine';
         oscillator.frequency.value = frequency;
-        gain.gain.value = 0.12 / (index + 1);
+        gain.gain.value = 0.18 / (index + 1);
         oscillator.connect(gain);
         gain.connect(masterGain);
         oscillator.start();
@@ -275,7 +269,7 @@
       filter.type = 'lowpass';
       filter.frequency.value = 2200;
       waterGain.gain.value = 0.001;
-      waterGain.gain.setTargetAtTime(0.26, audioContext.currentTime, 1.8);
+      waterGain.gain.setTargetAtTime(0.42, audioContext.currentTime, 1.8);
       waterMotion.type = 'sine';
       waterMotion.frequency.value = 0.16;
       motionGain.gain.value = 0.08;
@@ -287,10 +281,9 @@
       water.start();
       waterMotion.start();
 
-      document.getElementById('sound-toggle').innerHTML = '<span>◉</span> Gentle sound on';
     }
 
-    document.getElementById('sound-toggle').addEventListener('click', startAmbience);
+    document.querySelector('.scene').addEventListener('pointerdown', startAmbience, { once: true });
   </script>
 </body>
 </html>
