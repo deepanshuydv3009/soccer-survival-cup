@@ -932,6 +932,30 @@
             processSpeechQueue();
         }
 
+        function fallbackToSpeechSynthesis(item) {
+            if (!('speechSynthesis' in window)) {
+                currentSpeech = null;
+                processSpeechQueue();
+                return;
+            }
+            const fallbackVoice = new SpeechSynthesisUtterance(item.text);
+            currentSpeech = fallbackVoice;
+            fallbackVoice.lang = 'en-US';
+            fallbackVoice.volume = 1;
+            fallbackVoice.voice = pickVoice(item.type === 'match' ? 'male' : 'female');
+            fallbackVoice.rate = item.type === 'match' ? 1.12 : 1.05;
+            fallbackVoice.onend = () => {
+                currentSpeech = null;
+                processSpeechQueue();
+            };
+            fallbackVoice.onerror = () => {
+                currentSpeech = null;
+                processSpeechQueue();
+            };
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(fallbackVoice);
+        }
+
         function processSpeechQueue() {
             if (currentSpeech || speechQueue.length === 0) return;
             if (!voiceUnlocked) return;
@@ -941,8 +965,7 @@
             const subBox = document.getElementById('announcer-box');
             subBox.innerText = item.text;
 
-            const speaker = item.type === 'match' ? 'Brian' : 'Amy';
-            const voice = new Audio(`https://api.streamelements.com/kappa/v2/speech?voice=${speaker}&text=${encodeURIComponent(item.text)}`);
+            const voice = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodeURIComponent(item.text)}`);
             audioVoice = voice;
             currentSpeech = voice;
             voice.volume = 1;
@@ -954,12 +977,12 @@
             voice.onerror = function() {
                 currentSpeech = null;
                 audioVoice = null;
-                processSpeechQueue();
+                fallbackToSpeechSynthesis(item);
             };
             voice.play().catch(() => {
                 currentSpeech = null;
                 audioVoice = null;
-                processSpeechQueue();
+                fallbackToSpeechSynthesis(item);
             });
         }
 
