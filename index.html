@@ -965,7 +965,7 @@
             const subBox = document.getElementById('announcer-box');
             subBox.innerText = item.text;
 
-            const voice = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodeURIComponent(item.text)}`);
+            const voice = new Audio(`/api/tts?text=${encodeURIComponent(item.text)}`);
             audioVoice = voice;
             currentSpeech = voice;
             voice.volume = 1;
