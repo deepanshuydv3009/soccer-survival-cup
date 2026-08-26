@@ -706,6 +706,8 @@
         let isPaused = false;
         let ytBridgeInitialized = false;
         let liveMomentTimer = null;
+        let lastSpeechAt = 0;
+        let lastSpeechText = '';
 
         // Load voices when available in browser
         function loadVoices() {
@@ -927,9 +929,35 @@
         }
 
         function enqueueSpeech(text, type, priority) {
-            speechQueue.push({ text, type, priority, at: performance.now() });
-            speechQueue.sort((a, b) => b.priority - a.priority || a.at - b.at);
+            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!cleanText || !voiceUnlocked) return;
+
+            const now = performance.now();
+            const cooldown = type === 'promo' ? 30000 : type === 'system' ? 4500 : 1800;
+            if (cleanText === lastSpeechText && now - lastSpeechAt < cooldown) return;
+            if (type === 'promo' && now - lastSpeechAt < 12000) return;
+
+            const item = { text: cleanText, type, priority, at: now };
+            if (type === 'match') {
+                speechQueue = [];
+                stopCurrentSpeech();
+            } else if (currentSpeech || speechQueue.length > 0) {
+                return;
+            }
+
+            speechQueue.push(item);
             processSpeechQueue();
+        }
+
+        function stopCurrentSpeech() {
+            if (audioVoice) {
+                audioVoice.pause();
+                audioVoice.currentTime = 0;
+                audioVoice.src = '';
+                audioVoice = null;
+            }
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            currentSpeech = null;
         }
 
         function fallbackToSpeechSynthesis(item) {
@@ -961,6 +989,8 @@
             if (!voiceUnlocked) return;
             const item = speechQueue.shift();
             if (!item) return;
+            lastSpeechAt = performance.now();
+            lastSpeechText = item.text;
 
             const subBox = document.getElementById('announcer-box');
             subBox.innerText = item.text;
