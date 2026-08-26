@@ -557,6 +557,7 @@
         let isPaused = false;
         let lastSpeechAt = 0;
         let lastSpeechText = '';
+        let bgmMaster = null;
 
         // Load voices when available in browser
         function loadVoices() {
@@ -681,6 +682,12 @@
             enqueueSpeech(text, 'system', 2);
         }
 
+        function setBgmDuck(isDucked) {
+            if (!bgmMaster || !audioCtx) return;
+            bgmMaster.gain.cancelScheduledValues(audioCtx.currentTime);
+            bgmMaster.gain.setTargetAtTime(isDucked ? 0.1 : 0.32, audioCtx.currentTime, 0.08);
+        }
+
         function pickVoice(preference) {
             const englishVoices = availableVoices.filter(voice => voice.lang && voice.lang.toLowerCase().includes('en'));
             return englishVoices[0] || availableVoices[0] || null;
@@ -726,7 +733,8 @@
             let step = 0;
             let nextStepTime = audioCtx.currentTime + 0.08;
             const master = audioCtx.createGain();
-            master.gain.value = 0.2;
+            master.gain.value = 0.32;
+            bgmMaster = master;
             master.connect(audioCtx.destination);
 
             bgmInterval = setInterval(() => {
@@ -759,16 +767,19 @@
             }
             const fallbackVoice = new SpeechSynthesisUtterance(item.text);
             currentSpeech = fallbackVoice;
+            setBgmDuck(true);
             fallbackVoice.lang = 'en-US';
             fallbackVoice.volume = 1;
             fallbackVoice.voice = pickVoice(item.type === 'match' ? 'male' : 'female');
             fallbackVoice.rate = item.type === 'match' ? 1.12 : 1.05;
             fallbackVoice.onend = () => {
                 currentSpeech = null;
+                setBgmDuck(false);
                 processSpeechQueue();
             };
             fallbackVoice.onerror = () => {
                 currentSpeech = null;
+                setBgmDuck(false);
                 processSpeechQueue();
             };
             window.speechSynthesis.cancel();
@@ -790,19 +801,23 @@
             audioVoice = voice;
             currentSpeech = voice;
             voice.volume = 1;
+            setBgmDuck(true);
             voice.onended = function() {
                 currentSpeech = null;
                 audioVoice = null;
+                setBgmDuck(false);
                 processSpeechQueue();
             };
             voice.onerror = function() {
                 currentSpeech = null;
                 audioVoice = null;
+                setBgmDuck(false);
                 fallbackToSpeechSynthesis(item);
             };
             voice.play().catch(() => {
                 currentSpeech = null;
                 audioVoice = null;
+                setBgmDuck(false);
                 fallbackToSpeechSynthesis(item);
             });
         }
@@ -1514,6 +1529,7 @@
                 hypeMeter = clamp(hypeMeter + 5, 0, 100);
                 document.getElementById('stat-hype').innerText = String(hypeMeter);
                 lastEliminationAt = Date.now();
+                speakMatch(`${ball.country.name} is out. ${cause}.`);
 
                 if (balls.length === 1 && !roundOver) {
                     roundOver = true;
