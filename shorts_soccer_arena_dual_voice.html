@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soccer Survival Cup - YouTube Shorts</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #000;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #shorts-canvas {
+            width: 1080px;
+            height: 1920px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.33);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #03030c;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+        }
+
+        .retention-banner {
+            position: absolute;
+            top: 26px;
+            right: 26px;
+            z-index: 3;
+            padding: 12px 18px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(0, 255, 135, 0.16), rgba(96, 239, 255, 0.12));
+            border: 1px solid rgba(0, 255, 135, 0.25);
+            color: #eafff5;
+            text-align: right;
+            max-width: 330px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .retention-banner .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.72);
+        }
+
+        .retention-banner .value {
+            font-size: 20px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-top: 4px;
+        }
+
+        .voice-unlock {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            z-index: 4;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.28);
+            backdrop-filter: blur(10px);
+        }
+
+        /* BACKGROUND ART */
+        .arena-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 18%;
+            opacity: 0.72;
+            z-index: 0;
+            filter: saturate(1.25) contrast(1.15) brightness(0.95);
+        }
+
+        .overlay-gradient {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(10, 15, 10, 0.18) 0%, rgba(2, 5, 2, 0.72) 100%);
+            z-index: 1;
+        }
+
+        /* AUDIO PROMPT OVERLAY */
+        #audio-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            text-align: center;
+            padding: 40px;
+        }
+        #audio-overlay h1 { color: #00ff87; font-size: 50px; margin-bottom: 20px; }
+        #audio-overlay p { color: #fff; font-size: 26px; line-height: 1.5; }
+        #audio-btn {
+            margin-top: 30px;
+            background: #00ff87;
+            color: #000;
+            font-size: 30px;
+            font-weight: 800;
+            padding: 20px 50px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0,255,135,0.6);
+        }
+
+        /* --- UI ELEMENTS --- */
+        #ui-layer {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+        }
+
+        #header {
+            text-align: center;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .title {
+            font-size: 55px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(130deg, #00ff87 0%, #60efff 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            text-shadow: 0 0 30px rgba(0, 255, 135, 0.5);
+        }
+
+        .subtitle {
+            font-size: 22px;
+            color: #ddd;
+            margin-top: 4px;
+            letter-spacing: 3px;
+        }
+
+        /* DUAL SUBTITLE BOXES FOR SEPARATE VOICES */
+        #announcer-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ff87;
+            color: #00ff87;
+            font-size: 26px;
+            font-weight: 700;
+            padding: 12px 25px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0,255,135,0.3);
+            letter-spacing: 1px;
+            width: 90%;
+        }
+
+        #rule-strip {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .rule-pill {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+        }
+
+        #match-meta {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .meta-pill {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .meta-pill span:last-child {
+            color: #00ff87;
+            font-weight: 900;
+        }
+
+        #fan-meter {
+            width: 90%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .fan-label {
+            font-size: 13px;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.72);
+            min-width: 120px;
+        }
+
+        .fan-bar {
+            flex: 1;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+        }
+
+        .fan-bar > div {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #60efff, #00ff87, #f093fb);
+            box-shadow: 0 0 18px rgba(0,255,135,0.3);
+            transition: width 0.25s ease;
+        }
+
+        .fan-pick {
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            min-width: 120px;
+            text-align: right;
+        }
+
+        #live-command {
+            width: 90%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-left: 4px solid #ffb703;
+            background: rgba(255, 183, 3, 0.12);
+            color: #fff;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24);
+        }
+
+        #live-command .command-kicker {
+            color: #ffb703;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        #live-command .command-text {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        #live-status {
+            position: absolute;
+            top: 88px;
+            left: 30px;
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.78);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        #live-status::before {
+            content: '';
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #ffb703;
+            box-shadow: 0 0 12px #ffb703;
+        }
+
+        #live-status.online::before { background: #00ff87; box-shadow: 0 0 12px #00ff87; }
+        #live-status.paused::before { background: #ff4757; box-shadow: 0 0 12px #ff4757; }
+
+        #support-leaderboard {
+            width: 90%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: rgba(255,255,255,0.72);
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .support-title { color: #60efff; font-weight: 900; white-space: nowrap; }
+        .support-team {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            border: 1px solid rgba(96,239,255,0.16);
+            background: rgba(0,0,0,0.32);
+        }
+
+        #host-controls {
+            position: absolute;
+            right: 30px;
+            bottom: 28px;
+            z-index: 5;
+            display: flex;
+            gap: 8px;
+        }
+
+        .host-control {
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.52);
+            color: rgba(255,255,255,0.82);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .host-control:hover { border-color: #60efff; color: #fff; }
+
+        #live-moment {
+            position: absolute;
+            left: 50%;
+            bottom: 74px;
+            z-index: 4;
+            width: 78%;
+            transform: translateX(-50%);
+            padding: 9px 14px;
+            border-radius: 999px;
+            background: rgba(0,0,0,0.62);
+            border: 1px solid rgba(255,255,255,0.14);
+            color: #fff;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+        }
+
+        #live-moment.visible { opacity: 1; }
+
+        #stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 12px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .stat-card {
+            background: linear-gradient(180deg, rgba(18, 25, 20, 0.62), rgba(10, 14, 12, 0.42));
+            border: 1px solid rgba(0, 255, 135, 0.28);
+            border-radius: 18px;
+            padding: 12px 20px;
+            text-align: center;
+            flex: 1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 0 18px rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card .val {
+            font-size: 32px;
+            font-weight: 800;
+            color: #00ff87;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #ddd;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        /* --- THE GAME ARENA --- */
+        #canvas-container {
+            position: relative;
+            width: 720px;
+            height: 720px;
+            border-radius: 50%;
+            box-shadow: 0 0 70px rgba(0, 255, 135, 0.28), 0 0 120px rgba(96, 239, 255, 0.12), inset 0 0 40px rgba(0, 0, 0, 0.9);
+            background: radial-gradient(circle at 50% 45%, rgba(18, 40, 30, 0.34), rgba(8, 14, 18, 0.22) 55%, rgba(3, 6, 10, 0.28) 100%);
+            backdrop-filter: blur(5px);
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        canvas {
+            border-radius: 50%;
+        }
+
+        #elimination-feed {
+            position: relative;
+            width: 720px;
+            max-width: 92%;
+            z-index: 4;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 4px;
+            pointer-events: none;
+        }
+
+        .elim-chip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.72), rgba(18,25,20,0.55));
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.38);
+            animation: chipFloatIn 0.45s ease-out, chipFadeOut 0.7s ease-in forwards;
+            animation-delay: 0s, 4.8s;
+            min-width: 180px;
+        }
+
+        .elim-chip .flag-img {
+            width: 30px;
+            height: 20px;
+            border-radius: 4px;
+            object-fit: cover;
+            box-shadow: 0 0 10px rgba(0,0,0,0.45), 0 0 14px rgba(255,255,255,0.12);
+            flex-shrink: 0;
+        }
+
+        .elim-chip .name {
+            color: #fff;
+            font-weight: 800;
+            font-size: 17px;
+            letter-spacing: 0.6px;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+        }
+
+        .elim-chip .tag {
+            margin-left: auto;
+            color: #ff6b81;
+            font-size: 12px;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        #winner-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            border-radius: 50%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            animation: fadeIn 0.5s;
+        }
+        
+        #winner-overlay h2 {
+            color: #00ff87;
+            font-size: 55px;
+            margin: 15px 0;
+            text-align: center;
+            text-shadow: 0 0 30px rgba(0,255,135,0.8);
+        }
+        
+        #winner-overlay img {
+            width: 140px;
+            height: 90px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(255,255,255,0.5);
+        }
+        
+        #winner-overlay p {
+            color: #fff;
+            margin-top: 15px;
+            font-size: 22px;
+            letter-spacing: 2px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes chipFloatIn {
+            from { opacity: 0; transform: translateX(26px) translateY(8px) scale(0.96); }
+            to { opacity: 1; transform: translateX(0) translateY(0) scale(1); }
+        }
+
+        @keyframes chipFadeOut {
+            from { opacity: 1; transform: translateX(0) scale(1); }
+            to { opacity: 0; transform: translateX(12px) scale(0.96); }
+        }
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+</head>
+<body>
+
+    <div id="audio-overlay" onclick="startExperience()">
+        <div>
+            <h1>SOCCER SURVIVAL CUP</h1>
+            <p>Click anywhere or tap the button below to start the game with audio & voice narration!</p>
+            <button id="audio-btn">LAUNCH MATCH</button>
+        </div>
+    </div>
+
+    <div id="shorts-canvas">
+        <div class="voice-unlock" id="voice-unlock">Tap anywhere for voice</div>
+        <div class="retention-banner">
+            <div class="label">Watch rule</div>
+            <div class="value" id="rule-text">Every 8 seconds the arena must create tension.</div>
+        </div>
+        
+        <img class="arena-bg" src="file:///C:/Users/Deepanshu%20Yadav/.codex/generated_images/01a03e05-0812-7782-a3d4-e2a969f09e93/call_4n0stoYU3aKjzmaARaFL44Wb.png" alt="Messi and Ronaldo rivalry poster">
+        <div class="overlay-gradient"></div>
+
+        <div id="ui-layer">
+            <div id="header">
+                <h1 class="title">SOCCER SURVIVAL</h1>
+                <div class="subtitle">WHO WILL WIN THE CUP?</div>
+            </div>
+
+            <div id="announcer-box">Match is underway! Who will survive?</div>
+            <div id="rule-strip">
+                <div class="rule-pill">No dead air</div>
+                <div class="rule-pill">Chaos pulse every 8s</div>
+                <div class="rule-pill">Turbo final 6</div>
+            </div>
+            <div id="match-meta">
+                <div class="meta-pill"><span>Eliminations</span><span id="elim-count">0</span></div>
+                <div class="meta-pill"><span>Time</span><span id="game-time">00:00</span></div>
+            </div>
+            <div id="fan-meter">
+                <div class="fan-label">Live chat boosts</div>
+                <div class="fan-bar"><div id="fan-bar-fill"></div></div>
+                <div class="fan-pick" id="fan-top">No leader</div>
+            </div>
+            <div id="live-command">
+                <div class="command-kicker">Chat power</div>
+                <div class="command-text" id="command-text">Type !cheer + your country to protect your team</div>
+            </div>
+            <div id="support-leaderboard">
+                <div class="support-title">Fan podium</div>
+                <div class="support-team" id="support-1">1. Waiting...</div>
+                <div class="support-team" id="support-2">2. Waiting...</div>
+                <div class="support-team" id="support-3">3. Waiting...</div>
+            </div>
+
+            <div id="stats-bar">
+                <div class="stat-card">
+                    <div class="val" id="stat-total">32</div>
+                    <div class="label">Teams</div>
+                </div>
+                <div class="stat-card">
+                    <div class="val" id="stat-remain">32</div>
+                    <div class="label">Remaining</div>
+                </div>
+                <div class="stat-card">
+                    <div class="val" id="stat-hype">0</div>
+                    <div class="label">Hype</div>
+                </div>
+                <div class="stat-card">
+                    <div class="val" id="stat-cycle">MIN 1</div>
+                    <div class="label">Time</div>
+                </div>
+            </div>
+
+            <div id="canvas-container">
+                <div id="winner-overlay">
+                    <img id="winner-flag" src="" />
+                    <h2 id="winner-name">CHAMPION!</h2>
+                    <p>Preparing next match...</p>
+                </div>
+            </div>
+
+            <div id="elimination-feed"></div>
+        </div>
+
+        <div id="live-status">Chat bridge standby</div>
+        <div id="live-moment"></div>
+        <div id="host-controls">
+            <button class="host-control" id="pause-btn" type="button">Pause</button>
+            <button class="host-control" id="replay-btn" type="button">Replay</button>
+        </div>
+
+    </div>
+
+    <script>
+        let COUNTRY_DATA = [
+            { code: 'us', name: 'USA' }, { code: 'ca', name: 'Canada' },
+            { code: 'mx', name: 'Mexico' }, { code: 'br', name: 'Brazil' },
+            { code: 'gb', name: 'England' }, { code: 'de', name: 'Germany' },
+            { code: 'fr', name: 'France' }, { code: 'it', name: 'Italy' },
+            { code: 'es', name: 'Spain' }, { code: 'ar', name: 'Argentina' },
+            { code: 'jp', name: 'Japan' }, { code: 'kr', name: 'S. Korea' },
+            { code: 'cn', name: 'China' }, { code: 'in', name: 'India' },
+            { code: 'au', name: 'Australia' }, { code: 'tr', name: 'Turkey' },
+            { code: 'sa', name: 'S. Arabia' }, { code: 'eg', name: 'Egypt' },
+            { code: 'ng', name: 'Nigeria' }, { code: 'za', name: 'S. Africa' },
+            { code: 'ru', name: 'Russia' }, { code: 'ua', name: 'Ukraine' },
+            { code: 'nl', name: 'Netherlands' }, { code: 'se', name: 'Sweden' },
+            { code: 'pt', name: 'Portugal' }, { code: 'ch', name: 'Switzerland' },
+            { code: 'gr', name: 'Greece' }, { code: 'id', name: 'Indonesia' },
+            { code: 'ph', name: 'Philippines' }, { code: 'vn', name: 'Vietnam' },
+            { code: 'co', name: 'Colombia' }, { code: 'cl', name: 'Chile' }
+        ];
+
+        const flagImages = {};
+        COUNTRY_DATA.forEach(item => {
+            const img = new Image();
+            img.src = `https://flagcdn.com/w160/${item.code}.png`;
+            flagImages[item.code] = img;
+        });
+
+        // --- ENHANCED DUAL VOICE & QUEUE SYSTEM ---
+        let audioCtx = null;
+        let bgmInterval = null;
+        let isStarted = false;
+        let speechQueue = [];
+        let currentSpeech = null;
+        let availableVoices = [];
+        let voicesReady = false;
+        let voiceUnlocked = false;
+        let introSpeechPending = false;
+        let promoTimer = null;
+        let crowdSupport = {};
+        let isPaused = false;
+        let ytBridgeInitialized = false;
+        let liveMomentTimer = null;
+
+        // Load voices when available in browser
+        function loadVoices() {
+            if ('speechSynthesis' in window) {
+                availableVoices = window.speechSynthesis.getVoices();
+                voicesReady = availableVoices.length > 0;
+            }
+        }
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+            loadVoices();
+        }
+
+        function unlockVoice() {
+            voiceUnlocked = true;
+            const banner = document.getElementById('voice-unlock');
+            if (banner) banner.style.display = 'none';
+            if (introSpeechPending) {
+                introSpeechPending = false;
+                processSpeechQueue();
+            }
+        }
+
+        document.addEventListener('pointerdown', unlockVoice, { once: true, passive: true });
+        document.addEventListener('keydown', unlockVoice, { once: true });
+
+        function startExperience() {
+            if (isStarted) return;
+            isStarted = true;
+            document.getElementById('audio-overlay').style.display = 'none';
+            unlockVoice();
+
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(() => {});
+                }
+                startSoccerBGM();
+            } catch (e) {
+                audioCtx = null;
+            }
+            resetGame();
+            startYouTubeCommentBridge();
+            if (voiceUnlocked) {
+                speakPromo("Welcome to Soccer Survival Cup. Instant action, instant drama, no dead air. Like and subscribe for more epic soccer battles!");
+            } else {
+                introSpeechPending = true;
+            }
+        }
+
+        function startSoccerBGM() {
+            if (!audioCtx) return;
+            if (bgmInterval) clearInterval(bgmInterval);
+            if (promoTimer) clearInterval(promoTimer);
+            const tempo = 126;
+            const stepDuration = 60 / tempo / 4;
+            let step = 0;
+            let nextStepTime = audioCtx.currentTime + 0.08;
+            const master = audioCtx.createGain();
+            master.gain.value = 0.12;
+            master.connect(audioCtx.destination);
+
+            bgmInterval = setInterval(() => {
+                if (!audioCtx) return;
+                const horizon = audioCtx.currentTime + 0.45;
+                while (nextStepTime < horizon) {
+                    scheduleSoccerBeat(nextStepTime, step, master);
+                    nextStepTime += stepDuration;
+                    step = (step + 1) % 16;
+                }
+            }, 40);
+
+            promoTimer = setInterval(() => {
+                if (!isStarted || roundOver || !voiceUnlocked) return;
+                if (gameSeconds > 8 && balls.length > 6 && gameSeconds % 32 === 0) {
+                    speakPromo("Like and subscribe for more insane soccer survival battles!");
+                }
+            }, 2000);
+        }
+
+        function createNoiseBuffer(duration = 0.12) {
+            const length = Math.max(1, Math.floor(audioCtx.sampleRate * duration));
+            const buffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < length; i++) {
+                data[i] = (Math.random() * 2 - 1) * (1 - i / length);
+            }
+            return buffer;
+        }
+
+        function scheduleKick(time, master) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(110, time);
+            osc.frequency.exponentialRampToValueAtTime(44, time + 0.16);
+            gain.gain.setValueAtTime(0.001, time);
+            gain.gain.exponentialRampToValueAtTime(0.55, time + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.18);
+            osc.connect(gain);
+            gain.connect(master);
+            osc.start(time);
+            osc.stop(time + 0.19);
+        }
+
+        function scheduleSnare(time, master) {
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = createNoiseBuffer(0.14);
+            const filter = audioCtx.createBiquadFilter();
+            const gain = audioCtx.createGain();
+            filter.type = 'highpass';
+            filter.frequency.setValueAtTime(1100, time);
+            gain.gain.setValueAtTime(0.001, time);
+            gain.gain.exponentialRampToValueAtTime(0.35, time + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(master);
+            noise.start(time);
+            noise.stop(time + 0.13);
+        }
+
+        function scheduleHat(time, master, open = false) {
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = createNoiseBuffer(open ? 0.08 : 0.05);
+            const filter = audioCtx.createBiquadFilter();
+            const gain = audioCtx.createGain();
+            filter.type = 'highpass';
+            filter.frequency.setValueAtTime(open ? 7200 : 9200, time);
+            gain.gain.setValueAtTime(0.001, time);
+            gain.gain.exponentialRampToValueAtTime(open ? 0.09 : 0.05, time + 0.005);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + (open ? 0.06 : 0.03));
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(master);
+            noise.start(time);
+            noise.stop(time + (open ? 0.07 : 0.04));
+        }
+
+        function scheduleBass(time, step, master) {
+            const bassNotes = [55, 49, 52, 58];
+            const note = bassNotes[Math.floor(step / 4) % bassNotes.length];
+            const osc = audioCtx.createOscillator();
+            const filter = audioCtx.createBiquadFilter();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(note, time);
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(360, time);
+            gain.gain.setValueAtTime(0.001, time);
+            gain.gain.exponentialRampToValueAtTime(0.12, time + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.22);
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(master);
+            osc.start(time);
+            osc.stop(time + 0.24);
+        }
+
+        function scheduleSoccerBeat(time, step, master) {
+            const barStep = step % 16;
+            const isDownbeat = barStep === 0 || barStep === 8;
+            const isBackbeat = barStep === 4 || barStep === 12;
+
+            scheduleHat(time, master, barStep === 15);
+            if (barStep % 2 === 0) scheduleHat(time, master, false);
+            if (isDownbeat) scheduleKick(time, master);
+            if (isBackbeat) scheduleSnare(time, master);
+            if (barStep === 2 || barStep === 6 || barStep === 10 || barStep === 14) scheduleBass(time, step, master);
+
+            if (barStep === 0) {
+                const chant = audioCtx.createOscillator();
+                const chantGain = audioCtx.createGain();
+                chant.type = 'sawtooth';
+                chant.frequency.setValueAtTime(220, time);
+                chant.frequency.exponentialRampToValueAtTime(196, time + 0.4);
+                chantGain.gain.setValueAtTime(0.001, time);
+                chantGain.gain.exponentialRampToValueAtTime(0.02, time + 0.03);
+                chantGain.gain.exponentialRampToValueAtTime(0.001, time + 0.42);
+                chant.connect(chantGain);
+                chantGain.connect(master);
+                chant.start(time);
+                chant.stop(time + 0.43);
+            }
+        }
+
+        // Voice Type 1: Game Promotion / Intro (Warm / Hype voice)
+        function speakPromo(text) {
+            enqueueSpeech(text, 'promo', 1);
+        }
+
+        // Voice Type 2: Match Eliminations & Wins (Deep / Crisp Announcer voice)
+        function speakMatch(text) {
+            enqueueSpeech(text, 'match', 3);
+        }
+
+        function speakSystem(text) {
+            enqueueSpeech(text, 'system', 2);
+        }
+
+        function pickVoice(preference) {
+            if (!availableVoices.length) return null;
+
+            const voices = availableVoices.filter(v => v.lang && v.lang.toLowerCase().includes('en'));
+            const lowered = voices.map(v => ({ voice: v, name: (v.name || '').toLowerCase() }));
+
+            const femaleHints = ['female', 'samantha', 'zira', 'lisa', 'karen', 'aria', 'eva', 'victoria', 'susan', 'tessa', 'moira', 'serena', 'fiona', 'allison', 'emma', 'kathy', 'nicky', 'ava', 'heather'];
+            const maleHints = ['male', 'david', 'daniel', 'alex', 'tom', 'mark', 'george', 'john', 'uk english'];
+
+            if (preference === 'female') {
+                return lowered.find(entry => femaleHints.some(hint => entry.name.includes(hint)))?.voice || voices[0] || availableVoices[0];
+            }
+
+            if (preference === 'male') {
+                return lowered.find(entry => maleHints.some(hint => entry.name.includes(hint)))?.voice || voices[0] || availableVoices[0];
+            }
+
+            return voices[0] || availableVoices[0];
+        }
+
+        function enqueueSpeech(text, type, priority) {
+            speechQueue.push({ text, type, priority, at: performance.now() });
+            speechQueue.sort((a, b) => b.priority - a.priority || a.at - b.at);
+            processSpeechQueue();
+        }
+
+        function processSpeechQueue() {
+            if (currentSpeech || speechQueue.length === 0) return;
+            if (!voiceUnlocked) return;
+            let item = speechQueue.shift();
+            if (!item) return;
+
+            const subBox = document.getElementById('announcer-box');
+            subBox.innerText = item.text;
+
+            if ('speechSynthesis' in window) {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+                let utterance = new SpeechSynthesisUtterance(item.text);
+                currentSpeech = utterance;
+                utterance.lang = 'en-US';
+                utterance.volume = 1;
+                
+                // Select different system voices based on type if available
+                if (availableVoices.length > 0) {
+                    if (item.type === 'promo') {
+                        // Use a brighter female voice for promo and intro lines
+                        utterance.voice = pickVoice('female');
+                        utterance.pitch = 1.05;
+                        utterance.rate = 1.08;
+                    } else if (item.type === 'system') {
+                        utterance.voice = pickVoice('female');
+                        utterance.pitch = 1.02;
+                        utterance.rate = 1.1;
+                    } else {
+                        // Pick a deep/energetic announcer voice for match events
+                        utterance.voice = pickVoice('male');
+                        utterance.pitch = 0.9;
+                        utterance.rate = 1.18;
+                    }
+                }
+
+                if (!voicesReady && item.priority >= 2) {
+                    utterance.rate = 1.25;
+                }
+
+                utterance.onend = function() {
+                    currentSpeech = null;
+                    processSpeechQueue(); 
+                };
+                utterance.onerror = function() {
+                    currentSpeech = null;
+                    processSpeechQueue();
+                };
+                window.speechSynthesis.speak(utterance);
+            } else {
+                currentSpeech = null;
+                speechQueue = [];
+            }
+        }
+
+        const { Engine, Render, Runner, Bodies, Composite, Events, Body } = Matter;
+
+        let engine, render, runner;
+        const width = 720;
+        const height = 720;
+        const cx = width / 2;
+        const cy = height / 2;
+        const arenaRadius = 330;
+
+        let balls = [];
+        let powerups = [];
+        let spinnerBar1, spinnerBar2;
+        let spinnerSpeed = 0.005; 
+        let gameSeconds = 0;
+        let gameTimerInterval = null;
+        let stageNum = 1;
+        let roundOver = false;
+        let lastPulseAt = 0;
+        let lastEliminationAt = Date.now();
+        let lastPowerupAt = Date.now();
+        let hypeMeter = 0;
+        let holeRadius = 55;
+        let freezeUntil = 0;
+        let stormShiftAt = 0;
+        const RETENTION_RULES = {
+            chaosEveryMs: 7000,
+            turboAtSeconds: 22,
+            finalSprintAt: 6,
+            noDeadAirSeconds: 6,
+            stallLimitMs: 10000,
+            powerupEveryMs: 9000,
+            stormGrowthMs: 20000
+        };
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function initCrowdSupport() {
+            crowdSupport = {};
+            COUNTRY_DATA.forEach(country => {
+                crowdSupport[country.code] = 0;
+            });
+            updateCrowdUI();
+        }
+
+        function normalizeCommentText(text) {
+            return String(text || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+            function showLiveMoment(text) {
+                const moment = document.getElementById('live-moment');
+                if (!moment) return;
+                moment.innerText = text;
+                moment.classList.add('visible');
+                clearTimeout(liveMomentTimer);
+                liveMomentTimer = setTimeout(() => moment.classList.remove('visible'), 3200);
+            }
+
+        function findCountryFromComment(text) {
+            const norm = normalizeCommentText(text);
+            if (!norm) return null;
+
+            const aliases = {
+                us: ['usa', 'us', 'united states', 'america'],
+                gb: ['england', 'uk', 'great britain', 'britain', 'united kingdom'],
+                kr: ['south korea', 'korea'],
+                sa: ['saudi arabia'],
+                za: ['south africa'],
+                s: []
+            };
+
+            for (const country of COUNTRY_DATA) {
+                const code = country.code.toLowerCase();
+                const name = country.name.toLowerCase();
+                const pool = [name, code].concat(aliases[code] || []);
+                if (pool.some(token => token && (norm === token || norm.includes(` ${token} `) || norm.startsWith(`${token} `) || norm.endsWith(` ${token}`)))) {
+                    return country;
+                }
+            }
+            return null;
+        }
+
+        function updateCrowdUI() {
+            const top = COUNTRY_DATA
+                .map(country => ({ country, score: crowdSupport[country.code] || 0 }))
+                .sort((a, b) => b.score - a.score)[0];
+
+            const topLabel = document.getElementById('fan-top');
+            const fill = document.getElementById('fan-bar-fill');
+            if (topLabel) {
+                topLabel.innerText = top && top.score > 0 ? `${top.country.name} ${top.score}` : 'No leader';
+            }
+            if (fill) {
+                const maxScore = Math.max(1, ...(COUNTRY_DATA.map(country => crowdSupport[country.code] || 0)));
+                const ratio = top && top.score > 0 ? (top.score / maxScore) : 0;
+                fill.style.width = `${Math.max(6, Math.round(ratio * 100))}%`;
+            }
+
+            const leaders = COUNTRY_DATA
+                .map(country => ({ country, score: crowdSupport[country.code] || 0 }))
+                .filter(entry => entry.score > 0)
+                .sort((a, b) => b.score - a.score || a.country.name.localeCompare(b.country.name));
+            [1, 2, 3].forEach((rank, index) => {
+                const podium = document.getElementById(`support-${rank}`);
+                const leader = leaders[index];
+                if (podium) podium.innerText = leader ? `${rank}. ${leader.country.name} ${leader.score}` : `${rank}. Waiting...`;
+            });
+        }
+
+        function applyCrowdBoost(countryCode, amount = 1) {
+            if (!countryCode) return;
+            if (crowdSupport[countryCode] == null) crowdSupport[countryCode] = 0;
+            crowdSupport[countryCode] += amount;
+            updateCrowdUI();
+            const country = COUNTRY_DATA.find(entry => entry.code === countryCode);
+            if (country) showLiveMoment(`${country.name} fan squad sent +${amount} protection`);
+
+            const ball = balls.find(entry => entry.country && entry.country.code === countryCode && !entry.isDying);
+            if (ball) {
+                const hpBoost = Math.min(12, amount * 1.5);
+                ball.hp = Math.min(ball.maxHp, ball.hp + hpBoost);
+                if ((crowdSupport[countryCode] % 5) === 0) {
+                    ball.shieldCharges = (ball.shieldCharges || 0) + 1;
+                }
+                const dx = ball.position.x - cx;
+                const dy = ball.position.y - cy;
+                const dist = Math.max(10, Math.sqrt(dx * dx + dy * dy));
+                const push = Math.min(0.00014, crowdSupport[countryCode] * 0.000006);
+                Body.applyForce(ball, ball.position, {
+                    x: (dx / dist) * push,
+                    y: (dy / dist) * push
+                });
+            }
+        }
+
+        function registerCrowdComment(commentText) {
+            const normalized = normalizeCommentText(commentText);
+            const commandMatch = normalized.match(/^(?:cheer|boost|support)\s+(.+)$/);
+            const country = findCountryFromComment(commandMatch ? commandMatch[1] : normalized);
+            if (!country) return null;
+            applyCrowdBoost(country.code, 1);
+            if (commandMatch) {
+                document.getElementById('command-text').innerText = `${country.name} activated by live chat`;
+                speakSystem(`${country.name} is getting a live chat boost.`);
+            }
+            return country;
+        }
+
+        window.registerCrowdComment = registerCrowdComment;
+
+        let ytBridgeSeq = 0;
+        let ytBridgeTimer = null;
+        let ytBridgeOnline = false;
+
+        async function pollYouTubeCommentBridge() {
+            try {
+                const response = await fetch(`http://127.0.0.1:8787/feed?since=${ytBridgeSeq}`, {
+                    cache: 'no-store',
+                    mode: 'cors'
+                });
+                if (!response.ok) return;
+
+                const data = await response.json();
+                const bridgeStatus = data.status?.bridgeStatus || 'offline';
+                ytBridgeOnline = bridgeStatus === 'online';
+                const statusLabel = document.getElementById('live-status');
+                if (statusLabel) {
+                    statusLabel.innerText = bridgeStatus === 'online' ? 'Live chat connected' : `Chat bridge ${bridgeStatus}`;
+                    statusLabel.classList.toggle('online', bridgeStatus === 'online');
+                    statusLabel.classList.toggle('paused', false);
+                }
+                if (typeof data.nextSeq === 'number') {
+                    ytBridgeSeq = data.nextSeq;
+                }
+
+                if (!ytBridgeInitialized) {
+                    ytBridgeInitialized = true;
+                    return;
+                }
+
+                const items = Array.isArray(data.items) ? data.items : [];
+                if (items.length > 0) {
+                    ytBridgeOnline = true;
+                }
+
+                items.forEach(item => {
+                    if (!item || !item.text) return;
+                    if (item.countryCode) {
+                        applyCrowdBoost(item.countryCode, 1);
+                    } else {
+                        registerCrowdComment(item.text);
+                    }
+                });
+            } catch (err) {
+                ytBridgeOnline = false;
+                const statusLabel = document.getElementById('live-status');
+                if (statusLabel && !isPaused) {
+                    statusLabel.innerText = 'Chat bridge offline';
+                    statusLabel.classList.remove('online');
+                }
+            }
+        }
+
+        function startYouTubeCommentBridge() {
+            if (ytBridgeTimer) return;
+            ytBridgeTimer = setInterval(pollYouTubeCommentBridge, 1500);
+            pollYouTubeCommentBridge();
+        }
+
+        function setupHostControls() {
+            const pauseButton = document.getElementById('pause-btn');
+            const replayButton = document.getElementById('replay-btn');
+            if (pauseButton) {
+                pauseButton.addEventListener('click', () => {
+                    isPaused = !isPaused;
+                    pauseButton.innerText = isPaused ? 'Resume' : 'Pause';
+                    const statusLabel = document.getElementById('live-status');
+                    if (statusLabel) {
+                        statusLabel.innerText = isPaused ? 'Match paused' : (ytBridgeOnline ? 'Live chat connected' : 'Match live');
+                        statusLabel.classList.toggle('paused', isPaused);
+                    }
+                    showLiveMoment(isPaused ? 'Host pause: chat can choose the next survivor' : 'Match resumed: pressure is back on');
+                });
+            }
+            if (replayButton) {
+                replayButton.addEventListener('click', () => {
+                    isPaused = false;
+                    if (pauseButton) pauseButton.innerText = 'Pause';
+                    resetGame();
+                    showLiveMoment('Fresh bracket loaded: cheer for your country now');
+                });
+            }
+        }
+
+        function randomPowerupType() {
+            const types = ['BOOST', 'SHIELD', 'FREEZE', 'SURGE'];
+            return types[Math.floor(Math.random() * types.length)];
+        }
+
+        function spawnPowerup(forceType) {
+            if (roundOver || powerups.length >= 4) return;
+
+            const type = forceType || randomPowerupType();
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 120 + Math.random() * 150;
+            const x = clamp(cx + Math.cos(angle) * radius, 80, width - 80);
+            const y = clamp(cy + Math.sin(angle) * radius, 80, height - 80);
+
+            powerups.push({
+                id: `${type}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                type,
+                x,
+                y,
+                radius: 18,
+                bornAt: Date.now(),
+                ttl: 9000
+            });
+
+            if (type === 'SURGE') {
+                speakSystem('Surge orb appeared.');
+            }
+        }
+
+        function applyPowerupEffect(ball, powerup) {
+            const now = Date.now();
+            hypeMeter = clamp(hypeMeter + 8, 0, 100);
+
+            if (powerup.type === 'BOOST') {
+                ball.boostUntil = now + 4000;
+                Body.applyForce(ball, ball.position, {
+                    x: (ball.position.x - cx) * 0.00005,
+                    y: (ball.position.y - cy) * 0.00005
+                });
+                speakSystem(`${ball.country.name} grabbed boost.`);
+            } else if (powerup.type === 'SHIELD') {
+                ball.shieldCharges = (ball.shieldCharges || 0) + 1;
+                speakSystem(`${ball.country.name} picked up a shield.`);
+            } else if (powerup.type === 'FREEZE') {
+                freezeUntil = now + 3200;
+                speakMatch('Freeze field!');
+                document.getElementById('rule-text').innerText = 'Freeze field activated. The arena slows down.';
+            } else if (powerup.type === 'SURGE') {
+                balls.forEach(other => {
+                    if (other === ball || other.isDying) return;
+                    const dx = other.position.x - cx;
+                    const dy = other.position.y - cy;
+                    const dist = Math.max(12, Math.sqrt(dx * dx + dy * dy));
+                    Body.applyForce(other, other.position, {
+                        x: (dx / dist) * 0.01,
+                        y: (dy / dist) * 0.01
+                    });
+                });
+                hypeMeter = clamp(hypeMeter + 10, 0, 100);
+                speakMatch(`${ball.country.name} triggered a surge!`);
+            }
+
+            document.getElementById('stat-hype').innerText = String(hypeMeter);
+        }
+
+        function clearCollectedPowerups() {
+            const now = Date.now();
+            powerups = powerups.filter(p => now - p.bornAt < p.ttl);
+        }
+
+        function initEngine() {
+            if (render) {
+                Render.stop(render);
+                Runner.stop(runner);
+                Composite.clear(engine.world);
+                Engine.clear(engine);
+                const container = document.getElementById('canvas-container');
+                const canvasEl = container.querySelector('canvas');
+                if (canvasEl) canvasEl.remove();
+            }
+
+            engine = Engine.create();
+            engine.world.gravity.x = 0;
+            engine.world.gravity.y = 0;
+            holeRadius = 55;
+            powerups = [];
+
+            render = Render.create({
+                element: document.getElementById('canvas-container'),
+                engine: engine,
+                options: {
+                    width: width,
+                    height: height,
+                    wireframes: false,
+                    background: 'transparent'
+                }
+            });
+
+            const segments = 72;
+            const thickness = 35;
+            const boundaryParts = [];
+            for (let i = 0; i < segments; i++) {
+                const angle = (i / segments) * Math.PI * 2;
+                const x = cx + Math.cos(angle) * arenaRadius;
+                const y = cy + Math.sin(angle) * arenaRadius;
+                const part = Bodies.rectangle(x, y, thickness, (Math.PI * 2 * arenaRadius) / segments + 2, {
+                    isStatic: true,
+                    angle: angle,
+                    render: { fillStyle: '#ffffff' } 
+                });
+                boundaryParts.push(part);
+            }
+            Composite.add(engine.world, boundaryParts);
+
+            const centerHole = Bodies.circle(cx, cy, holeRadius, {
+                isStatic: true,
+                isSensor: true,
+                label: 'hole',
+                render: { fillStyle: '#ff000022', strokeStyle: '#ff4757', lineWidth: 4 }
+            });
+            Composite.add(engine.world, centerHole);
+
+            spinnerBar1 = Bodies.rectangle(cx, cy, 600, 20, {
+                isStatic: true,
+                label: 'blade',
+                render: { fillStyle: '#00d4ff' }
+            });
+            spinnerBar2 = Bodies.rectangle(cx, cy, 20, 600, {
+                isStatic: true,
+                label: 'blade',
+                render: { fillStyle: '#ff8f3d' }
+            });
+            Composite.add(engine.world, [spinnerBar1, spinnerBar2]);
+
+            shuffleArray(COUNTRY_DATA);
+            balls = [];
+            const ballRadius = 28;
+
+            COUNTRY_DATA.forEach((country, index) => {
+                const angle = (index / COUNTRY_DATA.length) * Math.PI * 2;
+                const dist = 176 + (index % 3) * 52;
+                const x = cx + Math.cos(angle) * dist;
+                const y = cy + Math.sin(angle) * dist;
+
+                const ball = Bodies.circle(x, y, ballRadius, {
+                    restitution: 0.9, 
+                    friction: 0.003,
+                    frictionAir: 0.0008, 
+                    label: 'flagBall',
+                    country: country,
+                    hp: 100,
+                    maxHp: 100,
+                    lastBladeHit: 0,
+                    isDying: false, 
+                    currentRadius: ballRadius,
+                    render: { visible: true }
+                });
+
+                Body.setVelocity(ball, {
+                    x: (Math.random() - 0.5) * 4.8,
+                    y: (Math.random() - 0.5) * 4.8
+                });
+                balls.push(ball);
+            });
+            Composite.add(engine.world, balls);
+
+            spawnPowerup('BOOST');
+            spawnPowerup('SHIELD');
+
+            Events.on(render, 'afterRender', function() {
+                const ctx = render.context;
+                const ringPulse = 0.5 + 0.5 * Math.sin(Date.now() / 280);
+
+                ctx.save();
+                const outerGlow = ctx.createRadialGradient(cx, cy, 40, cx, cy, arenaRadius + 42);
+                outerGlow.addColorStop(0, 'rgba(0, 255, 135, 0.08)');
+                outerGlow.addColorStop(0.55, 'rgba(0, 0, 0, 0.05)');
+                outerGlow.addColorStop(1, 'rgba(255, 71, 87, 0.10)');
+                ctx.fillStyle = outerGlow;
+                ctx.beginPath();
+                ctx.arc(cx, cy, arenaRadius + 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(cx, cy, arenaRadius - 10, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 + ringPulse * 0.08})`;
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(cx, cy, arenaRadius - 34, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(0, 255, 135, ${0.16 + ringPulse * 0.12})`;
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(cx, cy, arenaRadius - 70, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(96, 239, 255, ${0.12 + ringPulse * 0.08})`;
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([16, 14]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(cx - arenaRadius, cy);
+                ctx.lineTo(cx + arenaRadius, cy);
+                ctx.moveTo(cx, cy - arenaRadius);
+                ctx.lineTo(cx, cy + arenaRadius);
+                ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(cx, cy, holeRadius, 0, Math.PI * 2);
+                const holeGrad = ctx.createRadialGradient(cx, cy, 4, cx, cy, holeRadius);
+                holeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
+                holeGrad.addColorStop(0.45, 'rgba(255, 71, 87, 0.18)');
+                holeGrad.addColorStop(1, 'rgba(255, 71, 87, 0.05)');
+                ctx.fillStyle = holeGrad;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(cx, cy, holeRadius + 8, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 + ringPulse * 0.08})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(spinnerAngle);
+                [0, Math.PI / 2].forEach((rot, spokeIndex) => {
+                    ctx.save();
+                    ctx.rotate(rot);
+                    const spokeGrad = ctx.createLinearGradient(-18, 0, 18, 0);
+                    if (spokeIndex === 0) {
+                        spokeGrad.addColorStop(0, 'rgba(0,212,255,0.06)');
+                        spokeGrad.addColorStop(0.5, 'rgba(0,212,255,0.95)');
+                        spokeGrad.addColorStop(1, 'rgba(0,212,255,0.06)');
+                    } else {
+                        spokeGrad.addColorStop(0, 'rgba(255,143,61,0.06)');
+                        spokeGrad.addColorStop(0.5, 'rgba(255,143,61,0.95)');
+                        spokeGrad.addColorStop(1, 'rgba(255,143,61,0.06)');
+                    }
+                    ctx.strokeStyle = spokeGrad;
+                    ctx.lineWidth = 12;
+                    ctx.lineCap = 'round';
+                    ctx.shadowColor = spokeIndex === 0 ? 'rgba(0,212,255,0.8)' : 'rgba(255,143,61,0.8)';
+                    ctx.shadowBlur = 18;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -(arenaRadius - 74));
+                    ctx.lineTo(0, arenaRadius - 74);
+                    ctx.stroke();
+                    ctx.restore();
+                });
+                ctx.restore();
+
+                ctx.save();
+                const hubGrad = ctx.createRadialGradient(cx - 6, cy - 6, 4, cx, cy, 30);
+                hubGrad.addColorStop(0, 'rgba(255,255,255,0.98)');
+                hubGrad.addColorStop(0.3, 'rgba(96,239,255,0.92)');
+                hubGrad.addColorStop(0.7, 'rgba(0,212,255,0.72)');
+                hubGrad.addColorStop(1, 'rgba(16,22,32,0.98)');
+                ctx.beginPath();
+                ctx.arc(cx, cy, 28, 0, Math.PI * 2);
+                ctx.fillStyle = hubGrad;
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(cx, cy, 11, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(8,16,24,0.95)';
+                ctx.fill();
+                ctx.restore();
+
+                powerups.forEach(powerup => {
+                    const agePct = Math.min(1, (Date.now() - powerup.bornAt) / powerup.ttl);
+                    const glow = 1 - agePct;
+                    const palette = {
+                        BOOST: ['#60efff', '#00ff87'],
+                        SHIELD: ['#a78bfa', '#d946ef'],
+                        FREEZE: ['#7dd3fc', '#38bdf8'],
+                        SURGE: ['#f59e0b', '#fb7185']
+                    }[powerup.type] || ['#fff', '#aaa'];
+
+                    ctx.save();
+                    ctx.translate(powerup.x, powerup.y);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, powerup.radius + 8, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${0.04 + glow * 0.08})`;
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(0, 0, powerup.radius, 0, Math.PI * 2);
+                    const grad = ctx.createRadialGradient(0, 0, 2, 0, 0, powerup.radius);
+                    grad.addColorStop(0, palette[1]);
+                    grad.addColorStop(1, palette[0]);
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+                    ctx.strokeStyle = `rgba(255,255,255,${0.5 + glow * 0.4})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.fillStyle = '#081018';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(powerup.type.slice(0, 2), 0, 0);
+                    ctx.restore();
+                });
+
+                balls.forEach(ball => {
+                    const pos = ball.position;
+                    const r = ball.currentRadius;
+                    
+                    if (r <= 2) return; 
+
+                    ctx.save();
+                    ctx.translate(pos.x, pos.y);
+
+                    if (ball.isDying) {
+                        ctx.fillStyle = '#ff4757';
+                        ctx.fillRect(-r-5, -r-5, (r*2)+10, (r*2)+10);
+                        ctx.fillStyle = 'white';
+                        ctx.font = `${r*1.2}px Arial`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('🟥', 0, 0);
+                    } else {
+                        const hpPct = Math.max(0, ball.hp / ball.maxHp);
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r + 14, 0, Math.PI * 2);
+                        const aura = ctx.createRadialGradient(-r * 0.15, -r * 0.2, r * 0.25, 0, 0, r + 16);
+                        aura.addColorStop(0, 'rgba(255,255,255,0.26)');
+                        aura.addColorStop(0.42, hpPct > 0.5 ? 'rgba(0,255,135,0.24)' : hpPct > 0.25 ? 'rgba(255,185,48,0.24)' : 'rgba(255,71,87,0.28)');
+                        aura.addColorStop(0.78, hpPct > 0.5 ? 'rgba(0,212,255,0.10)' : hpPct > 0.25 ? 'rgba(255,143,61,0.10)' : 'rgba(255,71,87,0.10)');
+                        aura.addColorStop(1, 'rgba(0,0,0,0)');
+                        ctx.fillStyle = aura;
+                        ctx.fill();
+                        ctx.restore();
+
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r + 11, 0, Math.PI * 2);
+                        const frame = ctx.createLinearGradient(-r, -r, r, r);
+                        frame.addColorStop(0, 'rgba(255,255,255,0.62)');
+                        frame.addColorStop(0.35, hpPct > 0.5 ? 'rgba(0,212,255,0.94)' : hpPct > 0.25 ? 'rgba(255,185,48,0.92)' : 'rgba(255,71,87,0.92)');
+                        frame.addColorStop(0.7, hpPct > 0.5 ? 'rgba(0,255,135,0.9)' : hpPct > 0.25 ? 'rgba(255,143,61,0.88)' : 'rgba(255,71,87,0.88)');
+                        frame.addColorStop(1, 'rgba(12,20,30,0.95)');
+                        ctx.strokeStyle = frame;
+                        ctx.lineWidth = 5;
+                        ctx.stroke();
+                        ctx.restore();
+
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r + 7, 0, Math.PI * 2);
+                        ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r + 7, -Math.PI / 2, (-Math.PI / 2) + (Math.PI * 2 * hpPct));
+                        ctx.strokeStyle = hpPct > 0.5 ? '#00ff87' : (hpPct > 0.25 ? '#ffb703' : '#ff4757');
+                        ctx.lineWidth = 6;
+                        ctx.lineCap = 'round';
+                        ctx.stroke();
+
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r + 2, 0, Math.PI * 2);
+                        ctx.clip();
+                        const shine = ctx.createRadialGradient(-r * 0.35, -r * 0.35, 2, 0, 0, r);
+                        shine.addColorStop(0, 'rgba(255,255,255,0.34)');
+                        shine.addColorStop(0.35, 'rgba(255,255,255,0.08)');
+                        shine.addColorStop(1, 'rgba(255,255,255,0)');
+                        ctx.fillStyle = shine;
+                        ctx.fillRect(-r, -r, r * 2, r * 2);
+                        ctx.restore();
+
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r, 0, Math.PI * 2);
+                        ctx.clip();
+
+                        const img = flagImages[ball.country.code];
+                        if (img && img.complete) {
+                            ctx.save();
+                            ctx.shadowColor = hpPct > 0.5 ? 'rgba(0,255,135,0.62)' : hpPct > 0.25 ? 'rgba(255,185,48,0.64)' : 'rgba(255,71,87,0.72)';
+                            ctx.shadowBlur = 22;
+                            ctx.drawImage(img, -r, -r, r * 2, r * 2);
+                            ctx.restore();
+                        } else {
+                            const fallback = ctx.createRadialGradient(0, 0, 2, 0, 0, r);
+                            fallback.addColorStop(0, '#7dd3fc');
+                            fallback.addColorStop(0.45, '#3b82f6');
+                            fallback.addColorStop(1, '#111827');
+                            ctx.fillStyle = fallback;
+                            ctx.fill();
+                        }
+
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r - 6, 0, Math.PI * 2);
+                        const gloss = ctx.createRadialGradient(-r * 0.45, -r * 0.45, 2, 0, 0, r);
+                        gloss.addColorStop(0, 'rgba(255,255,255,0.34)');
+                        gloss.addColorStop(0.32, 'rgba(255,255,255,0.10)');
+                        gloss.addColorStop(1, 'rgba(255,255,255,0)');
+                        ctx.fillStyle = gloss;
+                        ctx.fill();
+                        ctx.restore();
+
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r - 1.5, 0, Math.PI * 2);
+                        ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r + 1, 0, Math.PI * 2);
+                        ctx.strokeStyle = 'rgba(8, 12, 18, 0.28)';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                });
+            });
+
+            let spinnerAngle = 0;
+            Events.on(engine, 'beforeUpdate', function() {
+                if (roundOver || isPaused) return;
+
+                spinnerAngle += spinnerSpeed;
+                Body.setAngle(spinnerBar1, spinnerAngle);
+                Body.setAngle(spinnerBar2, spinnerAngle);
+
+                const now = Date.now();
+                const freezeActive = now < freezeUntil;
+
+                if (gameSeconds > RETENTION_RULES.turboAtSeconds && !freezeActive) {
+                    spinnerSpeed = Math.min(0.028, spinnerSpeed + 0.00004);
+                }
+                if (balls.length <= 6 && !freezeActive) {
+                    spinnerSpeed = Math.min(0.032, spinnerSpeed + 0.00006);
+                }
+
+                if (now - lastPulseAt > RETENTION_RULES.chaosEveryMs) {
+                    lastPulseAt = now;
+                    applyChaosPulse();
+                }
+
+                if (now - lastPowerupAt > RETENTION_RULES.powerupEveryMs) {
+                    lastPowerupAt = now;
+                    spawnPowerup();
+                    if (powerups.length < 2) {
+                        spawnPowerup();
+                    }
+                }
+
+                if (now - stormShiftAt > RETENTION_RULES.stormGrowthMs) {
+                    stormShiftAt = now;
+                    holeRadius = Math.min(105, holeRadius + 3);
+                    document.getElementById('rule-text').innerText = `Storm ring tightened to ${holeRadius}px.`;
+                }
+
+                clearCollectedPowerups();
+                for (let i = powerups.length - 1; i >= 0; i--) {
+                    const powerup = powerups[i];
+                    let collected = false;
+                    for (const ball of balls) {
+                        if (ball.isDying) continue;
+                        const dx = ball.position.x - powerup.x;
+                        const dy = ball.position.y - powerup.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < ball.currentRadius + powerup.radius + 8) {
+                            applyPowerupEffect(ball, powerup);
+                            powerups.splice(i, 1);
+                            collected = true;
+                            break;
+                        }
+                    }
+                    if (collected) continue;
+                }
+
+                if (!roundOver && balls.length > 1 && now - lastEliminationAt > RETENTION_RULES.stallLimitMs) {
+                    const weakest = balls.reduce((best, ball) => {
+                        if (!best) return ball;
+                        return ball.hp < best.hp ? ball : best;
+                    }, null);
+
+                    if (weakest && !weakest.isDying) {
+                        lastEliminationAt = now;
+                        triggerDeathSequence(weakest, 'Pressure Break');
+                    }
+                }
+
+                for (let i = balls.length - 1; i >= 0; i--) {
+                    let ball = balls[i];
+
+                if (ball.isDying) {
+                    ball.currentRadius *= 0.96; 
+                    if (ball.currentRadius < 3) {
+                        finalizeElimination(ball, ball.causeOfDeath);
+                    }
+                        continue; 
+                    }
+
+                    const dx = cx - ball.position.x;
+                    const dy = cy - ball.position.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const crowdScore = crowdSupport[ball.country.code] || 0;
+
+                    let pullStrength = 0.00003;
+                    if (freezeActive) {
+                        pullStrength *= 0.45;
+                    }
+                    if (!freezeActive && gameSeconds > 45) {
+                        pullStrength = 0.0001;
+                    }
+                    if (!freezeActive && gameSeconds > RETENTION_RULES.turboAtSeconds) {
+                        pullStrength = 0.00018;
+                    }
+                    if (!freezeActive && (balls.length <= 3 || gameSeconds > 90)) {
+                        pullStrength = 0.0003;
+                    }
+                    if (!freezeActive && balls.length <= 2) {
+                        pullStrength = 0.00038;
+                    }
+
+                    if (crowdScore > 0 && !freezeActive) {
+                        const crowdForce = Math.min(0.00014, crowdScore * 0.000004);
+                        Body.applyForce(ball, ball.position, {
+                            x: (-dx / dist) * crowdForce,
+                            y: (-dy / dist) * crowdForce
+                        });
+                    }
+
+                    if (dist > 15) {
+                        Body.applyForce(ball, ball.position, {
+                            x: (dx / dist) * pullStrength,
+                            y: (dy / dist) * pullStrength
+                        });
+                    }
+
+                    if (dist < holeRadius) {
+                        if ((ball.shieldCharges || 0) > 0) {
+                            ball.shieldCharges -= 1;
+                            speakSystem(`${ball.country.name} survived the storm ring.`);
+                            Body.applyForce(ball, ball.position, {
+                                x: (ball.position.x - cx) * 0.01,
+                                y: (ball.position.y - cy) * 0.01
+                            });
+                        } else {
+                            ball.hp -= 0.08; 
+                            if (ball.hp <= 0 && !ball.isDying) {
+                                triggerDeathSequence(ball, 'Offside Trap');
+                            }
+                        }
+                    }
+
+                    if (gameSeconds >= RETENTION_RULES.finalSprintAt && balls.length <= 4) {
+                        const urgency = 0.000045 + (4 - balls.length) * 0.00002;
+                        Body.applyForce(ball, ball.position, {
+                            x: (dx / dist) * urgency * 0.6,
+                            y: (dy / dist) * urgency * 0.6
+                        });
+                    }
+
+                    if (ball.boostUntil && now < ball.boostUntil) {
+                        Body.applyForce(ball, ball.position, {
+                            x: (ball.position.x - cx) * 0.00002,
+                            y: (ball.position.y - cy) * 0.00002
+                        });
+                    }
+                }
+            });
+
+            Events.on(engine, 'collisionStart', function(event) {
+                if (roundOver) return;
+
+                event.pairs.forEach(pair => {
+                    const { bodyA, bodyB } = pair;
+                    let ball = null, blade = null;
+
+                    if (bodyA.label === 'flagBall' && bodyB.label === 'blade') { ball = bodyA; blade = bodyB; }
+                    if (bodyB.label === 'flagBall' && bodyA.label === 'blade') { ball = bodyB; blade = bodyA; }
+
+                    if (ball && !ball.isDying) {
+                        const now = Date.now();
+                        if (now - ball.lastBladeHit > 400) {
+                            if ((ball.shieldCharges || 0) > 0) {
+                                ball.shieldCharges -= 1;
+                                hypeMeter = clamp(hypeMeter + 4, 0, 100);
+                                document.getElementById('stat-hype').innerText = String(hypeMeter);
+                                speakSystem(`${ball.country.name}'s shield blocked the hit.`);
+                                Body.applyForce(ball, ball.position, {
+                                    x: (ball.position.x - cx) * 0.01,
+                                    y: (ball.position.y - cy) * 0.01
+                                });
+                                return;
+                            }
+
+                            ball.hp -= 14; 
+                            ball.lastBladeHit = now;
+                            
+                            const dx = ball.position.x - cx;
+                            const dy = ball.position.y - cy;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            Body.applyForce(ball, ball.position, {
+                                x: (dx / dist) * 0.012,
+                                y: (dy / dist) * 0.012
+                            });
+
+                            if (ball.hp <= 0) {
+                                triggerDeathSequence(ball, 'Hard Tackle');
+                            }
+                        }
+                    }
+                });
+            });
+
+            Render.run(render);
+            runner = Runner.create();
+            Runner.run(runner, engine);
+        }
+
+        function triggerDeathSequence(ball, cause) {
+            ball.isDying = true;
+            ball.causeOfDeath = cause;
+            ball.collisionFilter = { group: -1, category: 2, mask: 0 };
+        }
+
+        function finalizeElimination(ball, cause) {
+            const index = balls.indexOf(ball);
+            if (index > -1) {
+                balls.splice(index, 1);
+                Composite.remove(engine.world, ball);
+
+                const feed = document.getElementById('elimination-feed');
+                const chip = document.createElement('div');
+                chip.className = 'elim-chip';
+                chip.innerHTML = `
+                    <img class="flag-img" src="https://flagcdn.com/w80/${ball.country.code}.png" alt="${ball.country.name}" />
+                    <div class="name">${ball.country.name}</div>
+                    <div class="tag">${cause}</div>
+                `;
+                feed.prepend(chip);
+                setTimeout(() => {
+                    if (chip && chip.parentNode) chip.parentNode.removeChild(chip);
+                }, 5500);
+
+                document.getElementById('stat-remain').innerText = balls.length;
+                document.getElementById('elim-count').innerText = COUNTRY_DATA.length - balls.length;
+                hypeMeter = clamp(hypeMeter + 5, 0, 100);
+                document.getElementById('stat-hype').innerText = String(hypeMeter);
+                lastEliminationAt = Date.now();
+
+                if (balls.length === 1 && !roundOver) {
+                    roundOver = true;
+                    handleWin(balls[0]);
+                } else if (balls.length === 0 && !roundOver) {
+                    roundOver = true;
+                    setTimeout(resetGame, 2000);
+                }
+            }
+        }
+
+        function handleWin(winningBall) {
+            const winText = `${winningBall.country.name} wins the Soccer Survival Cup!`;
+            speakMatch(winText);
+
+            const overlay = document.getElementById('winner-overlay');
+            document.getElementById('winner-flag').src = `https://flagcdn.com/w160/${winningBall.country.code}.png`;
+            document.getElementById('winner-name').innerText = `${winningBall.country.name.toUpperCase()} WINS!`;
+            overlay.style.display = 'flex';
+            document.getElementById('rule-text').innerText = `${winningBall.country.name} claimed the cup. New match resets automatically.`;
+            hypeMeter = 100;
+            document.getElementById('stat-hype').innerText = '100';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                resetGame();
+            }, 6000);
+        }
+
+        function startTimer() {
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            gameSeconds = 0;
+            stageNum = 1;
+            spinnerSpeed = 0.005; 
+
+            gameTimerInterval = setInterval(() => {
+                if (roundOver || isPaused) return;
+
+                gameSeconds++;
+                const mins = String(Math.floor(gameSeconds / 60)).padStart(2, '0');
+                const secs = String(gameSeconds % 60).padStart(2, '0');
+                document.getElementById('game-time').innerText = `${mins}:${secs}`;
+
+                if (gameSeconds === 90) {
+                    spinnerSpeed = 0.024;
+                    speakMatch("Sudden death overtime!");
+                    document.getElementById('rule-text').innerText = 'Sudden death: every contact matters now.';
+                }
+
+                if (gameSeconds % 30 === 0 && gameSeconds > 0 && gameSeconds < 90) {
+                    stageNum++;
+                    spinnerSpeed += 0.003; 
+                    document.getElementById('stat-cycle').innerText = `MIN ${stageNum*15}`; 
+                    document.getElementById('rule-text').innerText = stageNum >= 4
+                        ? 'Final phase: the arena gets ruthless.'
+                        : 'Chaos pulse engaged. No safe zone.';
+                }
+
+                if (gameSeconds % RETENTION_RULES.noDeadAirSeconds === 0 && gameSeconds > 0) {
+                    speakSystem(stageNum >= 3
+                        ? `Pressure rising. ${balls.length} teams left.`
+                        : `The arena is waking up.`);
+                }
+            }, 1000);
+        }
+
+        function applyChaosPulse() {
+            if (roundOver || balls.length <= 1) return;
+
+            const target = balls.reduce((best, ball) => {
+                if (!best) return ball;
+                return ball.hp < best.hp ? ball : best;
+            }, null);
+
+            if (!target) return;
+
+            const dx = target.position.x - cx;
+            const dy = target.position.y - cy;
+            const dist = Math.max(12, Math.sqrt(dx * dx + dy * dy));
+            Body.applyForce(target, target.position, {
+                x: (dx / dist) * 0.018,
+                y: (dy / dist) * 0.018
+            });
+
+            target.hp -= 5;
+            document.getElementById('rule-text').innerText = `Chaos pulse locked on ${target.country.name}.`;
+
+            if (target.hp <= 0 && !target.isDying) {
+                triggerDeathSequence(target, 'Chaos Pulse');
+            }
+        }
+
+        function resetGame() {
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            roundOver = false;
+            lastPulseAt = 0;
+            lastEliminationAt = Date.now();
+            lastPowerupAt = Date.now();
+            stormShiftAt = Date.now();
+            freezeUntil = 0;
+            powerups = [];
+            holeRadius = 55;
+            hypeMeter = 0;
+            isPaused = false;
+            initCrowdSupport();
+            speechQueue = [];
+            currentSpeech = null;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            document.getElementById('elimination-feed').innerHTML = '';
+            document.getElementById('stat-total').innerText = COUNTRY_DATA.length;
+            document.getElementById('stat-remain').innerText = COUNTRY_DATA.length;
+            document.getElementById('stat-hype').innerText = '0';
+            document.getElementById('elim-count').innerText = 0;
+            document.getElementById('stat-cycle').innerText = 'MIN 1';
+            document.getElementById('game-time').innerText = '00:00';
+            document.getElementById('rule-text').innerText = 'Power-ups and storm ring enabled.';
+            document.getElementById('command-text').innerText = 'Type !cheer + your country to protect your team';
+            const pauseButton = document.getElementById('pause-btn');
+            if (pauseButton) pauseButton.innerText = 'Pause';
+
+            if (isStarted) {
+                // Use promo voice for new match start / promotion
+                if (voiceUnlocked) {
+                    speakPromo("New match starting. Power-ups, storm pressure, and nonstop drama. Like and subscribe for more epic soccer battles!");
+                } else {
+                    introSpeechPending = true;
+                }
+            }
+
+            initEngine();
+            startTimer();
+        }
+
+        window.addEventListener('load', setupHostControls);
+    </script>
+</body>
+</html>
