@@ -727,6 +727,14 @@
             enqueueSpeech(text, 'match', 3);
         }
 
+        function speakWinner(countryName) {
+            stopCurrentSpeech();
+            const text = `${countryName} wins!`;
+            const announcer = document.getElementById('announcer-box');
+            if (announcer) announcer.innerText = text;
+            enqueueSpeech(text, 'match', 4);
+        }
+
         function speakSystem(text) {
             enqueueSpeech(text, 'system', 2);
         }
@@ -812,6 +820,7 @@
             audioVoice = voice;
             currentSpeech = voice;
             voice.volume = 1;
+            voice.preload = 'auto';
             setBgmDuck(true);
             voice.onended = function() {
                 if (generation !== speechGeneration) return;
@@ -1567,8 +1576,7 @@
         }
 
         function handleWin(winningBall) {
-            const winText = `${winningBall.country.name} wins the Soccer Survival Cup!`;
-            speakMatch(winText);
+            speakWinner(winningBall.country.name);
 
             const overlay = document.getElementById('winner-overlay');
             document.getElementById('winner-flag').src = `https://flagcdn.com/w160/${winningBall.country.code}.png`;
