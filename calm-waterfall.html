@@ -68,6 +68,42 @@
       animation: waterPulse 3.6s ease-in-out infinite;
       pointer-events: none;
     }
+    .waterfall-sheen {
+      position: absolute;
+      left: 50%;
+      top: 16%;
+      width: min(17vw, 220px);
+      height: 57%;
+      transform: translateX(-50%);
+      background: repeating-linear-gradient(96deg, transparent 0 12px, rgba(255,255,255,.18) 14px 17px, transparent 19px 29px);
+      filter: blur(4px);
+      mix-blend-mode: screen;
+      opacity: .38;
+      animation: waterfallFlow 2.2s linear infinite;
+      pointer-events: none;
+    }
+    .pool-ripples {
+      position: absolute;
+      left: 50%;
+      bottom: 28%;
+      width: min(34vw, 430px);
+      height: 90px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      border: 2px solid rgba(218, 247, 229, .24);
+      box-shadow: 0 0 20px rgba(218, 247, 229, .12);
+      animation: rippleExpand 4.8s ease-out infinite;
+      pointer-events: none;
+    }
+    .pool-ripples::before, .pool-ripples::after {
+      content: '';
+      position: absolute;
+      inset: 13px 12%;
+      border: 1px solid rgba(218, 247, 229, .22);
+      border-radius: 50%;
+      animation: rippleExpand 4.8s ease-out 1.6s infinite;
+    }
+    .pool-ripples::after { inset: 28px 25%; animation-delay: 3.2s; }
     .mist {
       position: absolute;
       left: 50%;
@@ -173,6 +209,8 @@
     .control span { font-size: 16px; }
     @keyframes slowCamera { to { transform: scale(1.1) translate3d(-1%, -1%, 0); } }
     @keyframes waterPulse { 50% { opacity: .85; transform: translateX(-50%) scaleX(1.18); } }
+    @keyframes waterfallFlow { from { background-position: 0 -30px; } to { background-position: 18px 42px; } }
+    @keyframes rippleExpand { 0% { opacity: 0; transform: translateX(-50%) scale(.72); } 18% { opacity: .7; } 100% { opacity: 0; transform: translateX(-50%) scale(1.25); } }
     @keyframes mistDrift { to { transform: translateX(-47%) translateY(-9px) scale(1.1); } }
     @keyframes candleGlow { to { filter: brightness(1.18); box-shadow: 0 0 42px 18px rgba(255, 185, 74, .22); } }
     @keyframes floatDust { 0% { transform: translate(0, 30px); opacity: 0; } 20%, 80% { opacity: .8; } 100% { transform: translate(70px, -180px); opacity: 0; } }
@@ -183,6 +221,8 @@
   <main class="scene" aria-label="Calm waterfall ambience">
     <div class="arch"></div>
     <div class="water-glow"></div>
+    <div class="waterfall-sheen"></div>
+    <div class="pool-ripples"></div>
     <div class="mist"></div>
     <div class="dust"><i></i><i></i><i></i><i></i></div>
     <div class="candle one"></div><div class="candle two"></div><div class="candle three"></div>
@@ -228,15 +268,24 @@
       const water = audioContext.createBufferSource();
       const filter = audioContext.createBiquadFilter();
       const waterGain = audioContext.createGain();
+      const waterMotion = audioContext.createOscillator();
+      const motionGain = audioContext.createGain();
       water.buffer = buffer;
       water.loop = true;
       filter.type = 'lowpass';
-      filter.frequency.value = 1700;
-      waterGain.gain.value = 0.22;
+      filter.frequency.value = 2200;
+      waterGain.gain.value = 0.001;
+      waterGain.gain.setTargetAtTime(0.26, audioContext.currentTime, 1.8);
+      waterMotion.type = 'sine';
+      waterMotion.frequency.value = 0.16;
+      motionGain.gain.value = 0.08;
       water.connect(filter);
       filter.connect(waterGain);
       waterGain.connect(masterGain);
+      waterMotion.connect(motionGain);
+      motionGain.connect(waterGain.gain);
       water.start();
+      waterMotion.start();
 
       document.getElementById('sound-toggle').innerHTML = '<span>◉</span> Gentle sound on';
     }
