@@ -944,43 +944,43 @@
                 if (window.speechSynthesis.speaking) {
                     window.speechSynthesis.cancel();
                 }
-                let utterance = new SpeechSynthesisUtterance(item.text);
-                currentSpeech = utterance;
-                utterance.lang = 'en-US';
-                utterance.volume = 1;
+                const voice = new SpeechSynthesisUtterance(item.text);
+                currentSpeech = voice;
+                voice.lang = 'en-US';
+                voice.volume = 1;
                 
                 // Select different system voices based on type if available
                 if (availableVoices.length > 0) {
                     if (item.type === 'promo') {
                         // Use a brighter female voice for promo and intro lines
-                        utterance.voice = pickVoice('female');
-                        utterance.pitch = 1.05;
-                        utterance.rate = 1.08;
+                        voice.voice = pickVoice('female');
+                        voice.pitch = 1.05;
+                        voice.rate = 1.08;
                     } else if (item.type === 'system') {
-                        utterance.voice = pickVoice('female');
-                        utterance.pitch = 1.02;
-                        utterance.rate = 1.1;
+                        voice.voice = pickVoice('female');
+                        voice.pitch = 1.02;
+                        voice.rate = 1.1;
                     } else {
                         // Pick a deep/energetic announcer voice for match events
-                        utterance.voice = pickVoice('male');
-                        utterance.pitch = 0.9;
-                        utterance.rate = 1.18;
+                        voice.voice = pickVoice('male');
+                        voice.pitch = 0.9;
+                        voice.rate = 1.18;
                     }
                 }
 
                 if (!voicesReady && item.priority >= 2) {
-                    utterance.rate = 1.25;
+                    voice.rate = 1.25;
                 }
 
-                utterance.onend = function() {
+                voice.onend = function() {
                     currentSpeech = null;
                     processSpeechQueue(); 
                 };
-                utterance.onerror = function() {
+                voice.onerror = function() {
                     currentSpeech = null;
                     processSpeechQueue();
                 };
-                window.speechSynthesis.speak(utterance);
+                window.speechSynthesis.speak(voice);
             } else {
                 currentSpeech = null;
                 speechQueue = [];
