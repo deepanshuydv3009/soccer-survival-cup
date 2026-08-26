@@ -283,6 +283,49 @@
 
         #arena-status span:last-child { color: #60efff; }
 
+        #spotlight-panel {
+            width: 90%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 183, 3, 0.34);
+            background: linear-gradient(100deg, rgba(255, 183, 3, 0.16), rgba(3, 12, 22, 0.56));
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+        }
+
+        .spotlight-label {
+            color: #ffb703;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        #spotlight-name {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        #spotlight-hp {
+            color: #ffb703;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
         #stats-bar {
             display: flex;
             gap: 20px;
@@ -477,6 +520,11 @@
                 <div class="meta-pill"><span>Time</span><span id="game-time">00:00</span></div>
             </div>
             <div id="arena-status"><span>Elimination arena</span><span>Power-ups active</span></div>
+            <div id="spotlight-panel">
+                <div class="spotlight-label" id="spotlight-label">Player to watch</div>
+                <div id="spotlight-name">Match loading</div>
+                <div id="spotlight-hp">HP --</div>
+            </div>
 
             <div id="stats-bar">
                 <div class="stat-card">
@@ -1021,6 +1069,9 @@
             Events.on(render, 'afterRender', function() {
                 const ctx = render.context;
                 const ringPulse = 0.5 + 0.5 * Math.sin(Date.now() / 280);
+                const spotlightTarget = balls
+                    .filter(ball => !ball.isDying)
+                    .reduce((best, ball) => !best || ball.hp < best.hp ? ball : best, null);
 
                 ctx.save();
                 const outerGlow = ctx.createRadialGradient(cx, cy, 40, cx, cy, arenaRadius + 42);
@@ -1167,6 +1218,16 @@
 
                     ctx.save();
                     ctx.translate(pos.x, pos.y);
+
+                    if (ball === spotlightTarget) {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, r + 22 + ringPulse * 5, 0, Math.PI * 2);
+                        ctx.strokeStyle = `rgba(255, 183, 3, ${0.45 + ringPulse * 0.45})`;
+                        ctx.lineWidth = 4;
+                        ctx.setLineDash([8, 6]);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
 
                     if (ball.isDying) {
                         ctx.fillStyle = '#ff4757';
@@ -1536,6 +1597,7 @@
                 const mins = String(Math.floor(gameSeconds / 60)).padStart(2, '0');
                 const secs = String(gameSeconds % 60).padStart(2, '0');
                 document.getElementById('game-time').innerText = `${mins}:${secs}`;
+                updateSpotlight();
 
                 if (gameSeconds === 90) {
                     spinnerSpeed = 0.024;
@@ -1558,6 +1620,19 @@
                         : `The arena is waking up.`);
                 }
             }, 1000);
+        }
+
+        function updateSpotlight() {
+            const activeBalls = balls.filter(ball => !ball.isDying);
+            const target = activeBalls.reduce((best, ball) => !best || ball.hp < best.hp ? ball : best, null);
+            const label = document.getElementById('spotlight-label');
+            const name = document.getElementById('spotlight-name');
+            const hp = document.getElementById('spotlight-hp');
+            if (!target || !name || !hp || !label) return;
+
+            label.innerText = activeBalls.length <= 2 ? 'Final duel' : activeBalls.length <= 4 ? 'Final four' : 'Player to watch';
+            name.innerText = target.country.name;
+            hp.innerText = `HP ${Math.max(0, Math.ceil(target.hp))}`;
         }
 
         function applyChaosPulse() {
@@ -1630,6 +1705,7 @@
             }
 
             initEngine();
+            updateSpotlight();
             startTimer();
         }
 
