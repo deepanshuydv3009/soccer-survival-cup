@@ -726,7 +726,7 @@
             let step = 0;
             let nextStepTime = audioCtx.currentTime + 0.08;
             const master = audioCtx.createGain();
-            master.gain.value = 0.12;
+            master.gain.value = 0.2;
             master.connect(audioCtx.destination);
 
             bgmInterval = setInterval(() => {
