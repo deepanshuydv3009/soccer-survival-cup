@@ -1029,12 +1029,144 @@
             }
         }
 
+        function pickCommentaryVariant(variants) {
+            return variants[Math.floor(Math.random() * variants.length)];
+        }
+
+        function styleCommentaryText(text, type) {
+            const raw = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!raw) return raw;
+
+            if (type === 'promo' || /welcome to soccer survival cup/i.test(raw) || /new match starting/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Welcome to Soccer Survival Cup. The arena is live, the pressure is rising, and every touch can change everything.',
+                    'The match is on. Fast feet, sharp nerves, and one survivor at the end.',
+                    'Welcome in. This is Soccer Survival Cup where momentum shifts in a heartbeat.'
+                ]);
+            }
+
+            if (/surge orb appeared/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Surge orb on the field. First touch could change the whole story.',
+                    'A surge orb appears. Grab it fast, or someone else will.',
+                    'Surge orb live. Big momentum sitting right in the middle of the arena.'
+                ]);
+            }
+
+            if (/freeze field/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Freeze field activated. Everything just slowed to a crawl.',
+                    'Freeze field online. The arena just got slippery with danger.',
+                    'Freeze zone triggered. One clean move can slip through now.'
+                ]);
+            }
+
+            if (/tornado incoming/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Tornado incoming. Hold tight, the arena is about to spin.',
+                    'Tornado warning. Everyone is getting dragged into the chaos.',
+                    'A tornado is coming in. This is pure survival now.'
+                ]);
+            }
+
+            if (/meteor shower/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Meteor shower overhead. Move now or get clipped.',
+                    'Meteors falling. The arena is turning wild.',
+                    'Meteor shower in the sky. Nobody is safe for long.'
+                ]);
+            }
+
+            if (/lightning storm/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Lightning storm active. One strike can flip the whole match.',
+                    'Lightning in the arena. Keep moving or get caught.',
+                    'Storm is live. The pressure just got electric.'
+                ]);
+            }
+
+            if (/gravity flip/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Gravity flip engaged. The whole arena just changed.',
+                    'Gravity is gone. Up, down, none of it feels safe now.',
+                    'Gravity flip on. Control is everything here.'
+                ]);
+            }
+
+            if (/ring of fire/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Ring of fire active. Stay near the center and stay alive.',
+                    'Fire ring up. The middle is the only safe place now.',
+                    'Ring of fire live. The edges are a bad idea.'
+                ]);
+            }
+
+            const countryEventMatch = raw.match(/^(.+?)\s+(grabbed boost|picked up a shield|survived the storm ring|shield blocked the hit|is on the ropes|is out)\.(.*)$/i);
+            if (countryEventMatch) {
+                const country = countryEventMatch[1];
+                const action = countryEventMatch[2].toLowerCase();
+                const tail = String(countryEventMatch[3] || '').trim();
+                if (action.includes('grabbed boost')) {
+                    return pickCommentaryVariant([
+                        `${country} grabbed a boost. Momentum is shifting.`,
+                        `${country} just found a boost. That could spark a run.`,
+                        `Boost collected by ${country}. Very tidy timing.`
+                    ]);
+                }
+                if (action.includes('picked up a shield')) {
+                    return pickCommentaryVariant([
+                        `${country}'s got a shield now. That is a big safety net.`,
+                        `${country} picked up a shield. Nice little layer of protection.`,
+                        `Shield secured by ${country}. Smart move.`
+                    ]);
+                }
+                if (action.includes('survived the storm ring')) {
+                    return pickCommentaryVariant([
+                        `${country} survived the storm ring. What a hold.`,
+                        `${country} makes it through the storm. That was close.`,
+                        `Storm ring survived by ${country}. Massive composure.`
+                    ]);
+                }
+                if (action.includes('shield blocked the hit')) {
+                    return pickCommentaryVariant([
+                        `${country}'s shield blocked the hit. Massive save.`,
+                        `That shield from ${country} just saved the round.`,
+                        `${country} absorbs the impact and stays alive.`
+                    ]);
+                }
+                if (action.includes('is on the ropes')) {
+                    return pickCommentaryVariant([
+                        `${country} is on the ropes. ${tail || 'One more hit could end it.'}`,
+                        `${country} is under pressure. ${tail || 'The arena is closing in.'}`,
+                        `${country} is hanging on. ${tail || 'This is getting dangerous.'}`
+                    ]);
+                }
+                if (action.includes('is out')) {
+                    return pickCommentaryVariant([
+                        `${country} is out. ${tail || 'That was a clean elimination.'}`,
+                        `${country} bows out. ${tail || 'The run ends here.'}`,
+                        `${country} is eliminated. ${tail || 'No way back from that one.'}`
+                    ]);
+                }
+            }
+
+            if (/sudden death overtime/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Sudden death overtime. One mistake and it is over.',
+                    'Extra pressure now. Sudden death has arrived.',
+                    'Sudden death overtime. The next touch matters a lot.'
+                ]);
+            }
+
+            return raw;
+        }
+
         function speakPromo(text) {
-            enqueueSpeech(text, 'promo', 1);
+            enqueueSpeech(styleCommentaryText(text, 'promo'), 'promo', 1);
         }
 
         function speakMatch(text) {
-            enqueueSpeech(text, 'match', 3);
+            enqueueSpeech(styleCommentaryText(text, 'match'), 'match', 3);
         }
 
         function speakWinner(countryName, countryCode) {
@@ -1136,7 +1268,7 @@
         }
 
         function speakSystem(text) {
-            enqueueSpeech(text, 'system', 2);
+            enqueueSpeech(styleCommentaryText(text, 'system'), 'system', 2);
         }
 
         function setBgmDuck(isDucked) {
@@ -1147,6 +1279,13 @@
 
         function pickVoice(preference) {
             const englishVoices = availableVoices.filter(voice => voice.lang && voice.lang.toLowerCase().includes('en'));
+            const preferredFemaleNames = ['hazel', 'zira', 'samantha', 'victoria', 'allison', 'aria', 'jenny'];
+            const preferredNeutralNames = ['david', 'alex', 'daniel', 'tom'];
+            const preferredNames = preference === 'female' ? preferredFemaleNames : preferredNeutralNames;
+            for (const term of preferredNames) {
+                const match = englishVoices.find(voice => (voice.name || '').toLowerCase().includes(term));
+                if (match) return match;
+            }
             return englishVoices[0] || availableVoices[0] || null;
         }
 
@@ -1154,7 +1293,7 @@
             if (!('speechSynthesis' in window) || !voiceUnlocked) return false;
 
             const utterance = new SpeechSynthesisUtterance(text);
-            const chosenVoice = pickVoice(options.preference);
+            const chosenVoice = pickVoice(options.preference || 'female');
             if (chosenVoice) utterance.voice = chosenVoice;
             utterance.rate = options.rate || 1;
             utterance.pitch = options.pitch || 1;
@@ -1235,7 +1374,7 @@
                 if (!('speechSynthesis' in window)) return false;
 
                 browserUtterance = new SpeechSynthesisUtterance(announce);
-                const chosenVoice = pickVoice();
+                const chosenVoice = pickVoice('female');
                 if (chosenVoice) browserUtterance.voice = chosenVoice;
                 browserUtterance.rate = 0.92;
                 browserUtterance.pitch = 1.08;
