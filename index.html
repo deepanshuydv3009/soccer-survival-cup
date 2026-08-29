@@ -192,29 +192,30 @@
         }
 
         #header {
-            text-align: center;
-            margin-bottom: 16px;
-            width: 100%;
+            text-align: left;
+            margin-bottom: 14px;
+            width: 90%;
+            align-self: flex-start;
         }
 
         .title {
-            font-size: 56px;
+            font-size: 50px;
             font-weight: 900;
-            letter-spacing: 6px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            background: linear-gradient(130deg, #f8f4e3 0%, #a7f7ff 48%, #76ffc8 100%);
+            background: linear-gradient(135deg, #fff9e9 0%, #ffd966 42%, #8fe9ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin: 0;
-            text-shadow: 0 0 30px rgba(118, 255, 200, 0.35);
+            text-shadow: 0 0 22px rgba(255, 217, 102, 0.24);
             font-family: var(--font-display);
         }
 
         .subtitle {
-            font-size: 20px;
-            color: rgba(255,255,255,0.84);
-            margin-top: 8px;
-            letter-spacing: 5px;
+            font-size: 13px;
+            color: rgba(225,235,245,0.82);
+            margin-top: 6px;
+            letter-spacing: 6px;
             font-family: var(--font-body);
             text-transform: uppercase;
         }
@@ -235,10 +236,11 @@
             flex: 1;
             padding: 10px 12px;
             border-radius: 999px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(180deg, rgba(15, 21, 34, 0.82), rgba(8, 12, 20, 0.72));
+            border: 1px solid rgba(140, 208, 255, 0.16);
             text-align: center;
             font-family: var(--font-display);
+            box-shadow: inset 0 0 18px rgba(255,255,255,0.03);
         }
 
         #match-meta {
@@ -257,8 +259,8 @@
             align-items: center;
             padding: 10px 14px;
             border-radius: 14px;
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(180deg, rgba(15, 21, 34, 0.84), rgba(8, 12, 20, 0.74));
+            border: 1px solid rgba(255, 217, 102, 0.16);
             color: #fff;
             font-size: 14px;
             letter-spacing: 1px;
@@ -267,7 +269,7 @@
         }
 
         .meta-pill span:last-child {
-            color: #00ff87;
+            color: #ffd966;
             font-weight: 900;
         }
 
@@ -302,16 +304,16 @@
             gap: 12px;
             margin-bottom: 12px;
             padding: 10px 14px;
-            border: 1px solid rgba(96,239,255,0.2);
-            background: rgba(3, 12, 22, 0.52);
-            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(96,239,255,0.24);
+            background: linear-gradient(100deg, rgba(6, 14, 28, 0.88), rgba(10, 18, 34, 0.74));
+            color: rgba(245,248,252,0.82);
             font-size: 13px;
             font-weight: 800;
             letter-spacing: 1.2px;
             text-transform: uppercase;
         }
 
-        #arena-status span:last-child { color: #60efff; }
+        #arena-status span:last-child { color: #8fe9ff; }
 
         #spotlight-panel {
             width: 90%;
@@ -321,13 +323,13 @@
             gap: 16px;
             margin-bottom: 12px;
             padding: 12px 16px;
-            border: 1px solid rgba(255, 183, 3, 0.34);
-            background: linear-gradient(100deg, rgba(255, 183, 3, 0.16), rgba(3, 12, 22, 0.56));
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 217, 102, 0.34);
+            background: linear-gradient(100deg, rgba(255, 217, 102, 0.16), rgba(3, 12, 22, 0.56));
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
         }
 
         .spotlight-label {
-            color: #ffb703;
+            color: #ffd966;
             font-size: 12px;
             font-weight: 900;
             letter-spacing: 1.8px;
@@ -349,7 +351,7 @@
         }
 
         #spotlight-hp {
-            color: #ffb703;
+            color: #ffd966;
             font-size: 14px;
             font-weight: 900;
             letter-spacing: 1px;
@@ -365,8 +367,8 @@
         }
 
         .stat-card {
-            background: linear-gradient(180deg, rgba(18, 25, 20, 0.62), rgba(10, 14, 12, 0.42));
-            border: 1px solid rgba(0, 255, 135, 0.28);
+            background: linear-gradient(180deg, rgba(15, 21, 34, 0.82), rgba(8, 12, 20, 0.62));
+            border: 1px solid rgba(140, 208, 255, 0.18);
             border-radius: 18px;
             padding: 12px 20px;
             text-align: center;
@@ -378,12 +380,12 @@
         .stat-card .val {
             font-size: 32px;
             font-weight: 800;
-            color: #00ff87;
+            color: #ffd966;
         }
 
         .stat-card .label {
             font-size: 14px;
-            color: #ddd;
+            color: rgba(235, 241, 248, 0.82);
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-top: 2px;
@@ -397,13 +399,11 @@
             border-radius: 50%;
             overflow: hidden;
             box-shadow:
-                0 0 55px rgba(0, 255, 135, 0.26),
-                0 0 110px rgba(96, 239, 255, 0.16),
-                0 0 150px rgba(255, 119, 198, 0.12),
+                0 0 58px rgba(96, 239, 255, 0.22),
+                0 0 118px rgba(255, 217, 102, 0.10),
                 inset 0 0 40px rgba(0, 0, 0, 0.9);
             background:
-                radial-gradient(circle at 50% 45%, rgba(18, 40, 30, 0.34), rgba(8, 14, 18, 0.22) 55%, rgba(3, 6, 10, 0.28) 100%),
-                conic-gradient(from 90deg, rgba(0,212,255,0.18), rgba(118,255,200,0.18), rgba(255,183,3,0.18), rgba(255,107,129,0.18), rgba(0,212,255,0.18));
+                radial-gradient(circle at 50% 45%, rgba(16, 31, 58, 0.42), rgba(7, 12, 22, 0.24) 55%, rgba(2, 4, 8, 0.30) 100%);
             backdrop-filter: blur(5px);
             margin-top: 12px;
             margin-bottom: 15px;
@@ -416,17 +416,11 @@
         #canvas-container::before {
             content: '';
             position: absolute;
-            inset: -18px;
+            inset: -16px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg,
-                rgba(0,212,255,0.95),
-                rgba(118,255,200,0.95),
-                rgba(255,183,3,0.95),
-                rgba(255,107,129,0.95),
-                rgba(159,122,234,0.95),
-                rgba(0,212,255,0.95));
-            filter: blur(16px);
-            opacity: 0.7;
+            background: radial-gradient(circle, rgba(96,239,255,0.14) 0%, rgba(255,217,102,0.08) 36%, rgba(0,0,0,0) 72%);
+            filter: blur(18px);
+            opacity: 0.50;
             pointer-events: none;
             z-index: 0;
         }
@@ -453,7 +447,7 @@
             position: absolute;
             inset: 0;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(0,255,135,0.14) 25%, rgba(0,0,0,0) 72%);
+            background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(230,235,240,0.10) 25%, rgba(0,0,0,0) 72%);
             opacity: 0;
             mix-blend-mode: screen;
             transition: opacity 0.2s ease;
@@ -1981,9 +1975,9 @@
 
                 ctx.save();
                 const outerGlow = ctx.createRadialGradient(cx, cy, 40, cx, cy, arenaRadius + 42);
-                outerGlow.addColorStop(0, 'rgba(0, 255, 135, 0.08)');
-                outerGlow.addColorStop(0.55, 'rgba(0, 0, 0, 0.05)');
-                outerGlow.addColorStop(1, 'rgba(255, 71, 87, 0.10)');
+                outerGlow.addColorStop(0, 'rgba(96, 239, 255, 0.08)');
+                outerGlow.addColorStop(0.55, 'rgba(0, 0, 0, 0.04)');
+                outerGlow.addColorStop(1, 'rgba(255, 217, 102, 0.08)');
                 ctx.fillStyle = outerGlow;
                 ctx.beginPath();
                 ctx.arc(cx, cy, arenaRadius + 30, 0, Math.PI * 2);
@@ -1998,13 +1992,13 @@
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.arc(cx, cy, arenaRadius - 34, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(0, 255, 135, ${0.16 + ringPulse * 0.12})`;
+                ctx.strokeStyle = `rgba(96, 239, 255, ${0.18 + ringPulse * 0.10})`;
                 ctx.lineWidth = 4;
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.arc(cx, cy, arenaRadius - 70, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(96, 239, 255, ${0.12 + ringPulse * 0.08})`;
-                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = `rgba(255, 217, 102, ${0.09 + ringPulse * 0.05})`;
+                ctx.lineWidth = 1.4;
                 ctx.setLineDash([16, 14]);
                 ctx.stroke();
                 ctx.setLineDash([]);
@@ -2022,9 +2016,9 @@
                 ctx.beginPath();
                 ctx.arc(cx, cy, holeRadius, 0, Math.PI * 2);
                 const holeGrad = ctx.createRadialGradient(cx, cy, 4, cx, cy, holeRadius);
-                holeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
-                holeGrad.addColorStop(0.45, 'rgba(255, 71, 87, 0.18)');
-                holeGrad.addColorStop(1, 'rgba(255, 71, 87, 0.05)');
+                holeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.16)');
+                holeGrad.addColorStop(0.45, 'rgba(255, 217, 102, 0.12)');
+                holeGrad.addColorStop(1, 'rgba(30, 36, 58, 0.08)');
                 ctx.fillStyle = holeGrad;
                 ctx.fill();
                 ctx.beginPath();
@@ -2042,19 +2036,19 @@
                     ctx.rotate(rot);
                     const spokeGrad = ctx.createLinearGradient(-18, 0, 18, 0);
                     if (spokeIndex === 0) {
-                        spokeGrad.addColorStop(0, 'rgba(0,212,255,0.06)');
-                        spokeGrad.addColorStop(0.5, 'rgba(0,212,255,0.95)');
-                        spokeGrad.addColorStop(1, 'rgba(0,212,255,0.06)');
+                        spokeGrad.addColorStop(0, 'rgba(255,255,255,0.05)');
+                        spokeGrad.addColorStop(0.5, 'rgba(140,205,255,0.88)');
+                        spokeGrad.addColorStop(1, 'rgba(255,255,255,0.05)');
                     } else {
-                        spokeGrad.addColorStop(0, 'rgba(255,143,61,0.06)');
-                        spokeGrad.addColorStop(0.5, 'rgba(255,143,61,0.95)');
-                        spokeGrad.addColorStop(1, 'rgba(255,143,61,0.06)');
+                        spokeGrad.addColorStop(0, 'rgba(255,255,255,0.05)');
+                        spokeGrad.addColorStop(0.5, 'rgba(188,160,255,0.88)');
+                        spokeGrad.addColorStop(1, 'rgba(255,255,255,0.05)');
                     }
                     ctx.strokeStyle = spokeGrad;
                     ctx.lineWidth = 12;
                     ctx.lineCap = 'round';
-                    ctx.shadowColor = spokeIndex === 0 ? 'rgba(0,212,255,0.8)' : 'rgba(255,143,61,0.8)';
-                    ctx.shadowBlur = 18;
+                    ctx.shadowColor = 'rgba(140,205,255,0.24)';
+                    ctx.shadowBlur = 8;
                     ctx.beginPath();
                     ctx.moveTo(0, -(arenaRadius - 74));
                     ctx.lineTo(0, arenaRadius - 74);
@@ -2066,8 +2060,8 @@
                 ctx.save();
                 const hubGrad = ctx.createRadialGradient(cx - 6, cy - 6, 4, cx, cy, 30);
                 hubGrad.addColorStop(0, 'rgba(255,255,255,0.98)');
-                hubGrad.addColorStop(0.3, 'rgba(96,239,255,0.92)');
-                hubGrad.addColorStop(0.7, 'rgba(0,212,255,0.72)');
+                hubGrad.addColorStop(0.3, 'rgba(255,217,102,0.94)');
+                hubGrad.addColorStop(0.7, 'rgba(144,164,255,0.78)');
                 hubGrad.addColorStop(1, 'rgba(16,22,32,0.98)');
                 ctx.beginPath();
                 ctx.arc(cx, cy, 28, 0, Math.PI * 2);
