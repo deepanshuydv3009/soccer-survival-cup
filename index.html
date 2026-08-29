@@ -218,27 +218,6 @@
             text-transform: uppercase;
         }
 
-        /* DUAL SUBTITLE BOXES FOR SEPARATE VOICES */
-        #announcer-box {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #00ff87;
-            color: #00ff87;
-            font-size: 26px;
-            font-weight: 700;
-            padding: 12px 25px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            text-align: center;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(0,255,135,0.3);
-            letter-spacing: 1px;
-            width: 90%;
-            font-family: var(--font-display);
-        }
-
         #rule-strip {
             width: 90%;
             display: flex;
@@ -793,8 +772,6 @@
                 <h1 class="title">SOCCER SURVIVAL</h1>
                 <div class="subtitle">WHO WILL WIN THE CUP?</div>
             </div>
-
-            <div id="announcer-box">Match is underway! Who will survive?</div>
             <div id="rule-strip">
                 <div class="rule-pill">No dead air</div>
                 <div class="rule-pill">Chaos pulse every 8s</div>
@@ -1197,8 +1174,6 @@
             stopCurrentSpeech();
             speechQueue = [];
             const text = `And the winner is ${countryName}!`;
-            const announcer = document.getElementById('announcer-box');
-            if (announcer) announcer.innerText = text;
             announceWinnerNow(text, countryCode);
         }
 
@@ -1501,9 +1476,6 @@
             const generation = ++speechGeneration;
             lastSpeechAt = performance.now();
             lastSpeechText = item.text;
-
-            const subBox = document.getElementById('announcer-box');
-            subBox.innerText = item.text;
 
             const voice = new Audio(`/api/tts?text=${encodeURIComponent(item.text)}`);
             audioVoice = voice;
