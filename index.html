@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚽ EPIC SOCCER SURVIVAL - Live Comment Chaos!</title>
+    <title>Aurora Cup - Live Soccer Survival</title>
     <meta name="description" content="Watch 32 countries battle in real-time with live comments, audience reactions, predictions, and chaos-triggering fan messages.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,6 +49,7 @@
         }
 
         .retention-banner {
+            display: none;
             position: absolute;
             top: 26px;
             right: 26px;
@@ -187,33 +188,33 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            padding: 30px;
+            padding: 54px 30px 30px;
         }
 
         #header {
             text-align: center;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
             width: 100%;
         }
 
         .title {
-            font-size: 55px;
+            font-size: 56px;
             font-weight: 900;
-            letter-spacing: 4px;
+            letter-spacing: 6px;
             text-transform: uppercase;
-            background: linear-gradient(130deg, #00ff87 0%, #60efff 50%, #f093fb 100%);
+            background: linear-gradient(130deg, #f8f4e3 0%, #a7f7ff 48%, #76ffc8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin: 0;
-            text-shadow: 0 0 30px rgba(0, 255, 135, 0.5);
+            text-shadow: 0 0 30px rgba(118, 255, 200, 0.35);
             font-family: var(--font-display);
         }
 
         .subtitle {
-            font-size: 22px;
-            color: #ddd;
-            margin-top: 4px;
-            letter-spacing: 3px;
+            font-size: 20px;
+            color: rgba(255,255,255,0.84);
+            margin-top: 8px;
+            letter-spacing: 5px;
             font-family: var(--font-body);
             text-transform: uppercase;
         }
@@ -398,9 +399,10 @@
             box-shadow: 0 0 70px rgba(0, 255, 135, 0.28), 0 0 120px rgba(96, 239, 255, 0.12), inset 0 0 40px rgba(0, 0, 0, 0.9);
             background: radial-gradient(circle at 50% 45%, rgba(18, 40, 30, 0.34), rgba(8, 14, 18, 0.22) 55%, rgba(3, 6, 10, 0.28) 100%);
             backdrop-filter: blur(5px);
+            margin-top: 12px;
             margin-bottom: 15px;
             flex-shrink: 0;
-            transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 12px, 0);
             will-change: transform, filter;
             transition: transform 0.08s linear, filter 0.2s ease;
         }
@@ -749,7 +751,7 @@
 
     <div id="audio-overlay" onclick="startExperience()">
         <div>
-            <h1>SOCCER SURVIVAL CUP</h1>
+            <h1>AURORA CUP</h1>
             <p>Click anywhere or tap the button below to start the game with audio & voice narration!</p>
             <button id="audio-btn">LAUNCH MATCH</button>
         </div>
@@ -769,8 +771,8 @@
 
         <div id="ui-layer">
             <div id="header">
-                <h1 class="title">SOCCER SURVIVAL</h1>
-                <div class="subtitle">WHO WILL WIN THE CUP?</div>
+                <h1 class="title">AURORA CUP</h1>
+                <div class="subtitle">LIVE SOCCER SURVIVAL</div>
             </div>
             <div id="rule-strip">
                 <div class="rule-pill">No dead air</div>
