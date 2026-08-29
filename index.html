@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soccer Survival Cup - YouTube Shorts</title>
+    <title>⚽ EPIC SOCCER SURVIVAL - Live Comment Chaos!</title>
+    <meta name="description" content="Watch 32 countries battle in real-time with live comments, audience reactions, predictions, and chaos-triggering fan messages.">
     <style>
         * { box-sizing: border-box; }
         body {
@@ -66,6 +67,39 @@
             font-weight: 900;
             line-height: 1.2;
             margin-top: 4px;
+        }
+
+        .special-mode-banner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 15;
+            padding: 40px 60px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(255, 0, 100, 0.95), rgba(255, 100, 0, 0.95));
+            border: 5px solid #fff;
+            color: #fff;
+            text-align: center;
+            font-size: 56px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            box-shadow: 0 0 80px rgba(255, 50, 50, 0.9), inset 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: modePopIn 0.5s ease, modePulse 1.5s ease-in-out infinite;
+            display: none;
+            pointer-events: none;
+        }
+
+        @keyframes modePopIn {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.15) rotate(5deg); }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes modePulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 80px rgba(255, 50, 50, 0.9); }
+            50% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 120px rgba(255, 50, 50, 1); }
         }
 
         .voice-unlock {
@@ -365,15 +399,138 @@
             width: 720px;
             height: 720px;
             border-radius: 50%;
+            overflow: hidden;
             box-shadow: 0 0 70px rgba(0, 255, 135, 0.28), 0 0 120px rgba(96, 239, 255, 0.12), inset 0 0 40px rgba(0, 0, 0, 0.9);
             background: radial-gradient(circle at 50% 45%, rgba(18, 40, 30, 0.34), rgba(8, 14, 18, 0.22) 55%, rgba(3, 6, 10, 0.28) 100%);
             backdrop-filter: blur(5px);
             margin-bottom: 15px;
             flex-shrink: 0;
+            transform: translate3d(0, 0, 0);
+            will-change: transform, filter;
+            transition: transform 0.08s linear, filter 0.2s ease;
         }
 
         canvas {
             border-radius: 50%;
+        }
+
+        #arena-vfx-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 7;
+            overflow: hidden;
+        }
+
+        #arena-flash {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(0,255,135,0.14) 25%, rgba(0,0,0,0) 72%);
+            opacity: 0;
+            mix-blend-mode: screen;
+            transition: opacity 0.2s ease;
+        }
+
+        #arena-flash.active {
+            opacity: 1;
+        }
+
+        #elimination-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .elim-burst {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            left: 0;
+            top: 0;
+            transform: translate(-50%, -50%);
+            animation: elimBurstRise 1.65s ease-out forwards;
+        }
+
+        .elim-burst::before,
+        .elim-burst::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        .elim-burst::before {
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,107,129,0.95) 38%, rgba(255,107,129,0) 72%);
+            box-shadow: 0 0 22px rgba(255,107,129,0.9), 0 0 60px rgba(255,107,129,0.55);
+        }
+
+        .elim-burst::after {
+            width: 28px;
+            height: 28px;
+            border: 2px solid rgba(255,255,255,0.75);
+            box-shadow: 0 0 24px rgba(255,255,255,0.3);
+            animation: elimShockwave 1.65s ease-out forwards;
+        }
+
+        .elim-burst .tag {
+            position: absolute;
+            left: 50%;
+            top: -14px;
+            transform: translate(-50%, -100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: max-content;
+            max-width: 140px;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .elim-burst .spark {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.9);
+            animation: elimSpark 1.3s ease-out forwards;
+        }
+
+        @keyframes elimBurstRise {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+            18% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.8); }
+        }
+
+        @keyframes elimShockwave {
+            0% { opacity: 0.95; transform: translate(-50%, -50%) scale(0.2); }
+            30% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(18); }
+        }
+
+        @keyframes elimSpark {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -50%) translateY(-80px) scale(2); }
         }
 
         #elimination-feed {
@@ -442,6 +599,101 @@
             z-index: 10;
             animation: fadeIn 0.5s;
         }
+
+        #winner-celebration-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 9;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        #winner-celebration-layer.active {
+            opacity: 1;
+        }
+
+        .winner-spotlight {
+            position: absolute;
+            top: -12%;
+            width: 24%;
+            height: 140%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 28%, rgba(255,255,255,0) 72%);
+            filter: blur(2px);
+            transform-origin: top center;
+            mix-blend-mode: screen;
+            animation: spotlightSweep 2.8s ease-in-out infinite alternate;
+        }
+
+        .winner-spotlight.left {
+            left: 12%;
+            transform: rotate(-22deg);
+            background: linear-gradient(180deg, rgba(0,255,135,0.22) 0%, rgba(0,255,135,0.08) 28%, rgba(0,255,135,0) 72%);
+        }
+
+        .winner-spotlight.right {
+            right: 12%;
+            transform: rotate(22deg);
+            background: linear-gradient(180deg, rgba(96,239,255,0.22) 0%, rgba(96,239,255,0.08) 28%, rgba(96,239,255,0) 72%);
+            animation-direction: alternate-reverse;
+        }
+
+        @keyframes spotlightSweep {
+            from { opacity: 0.35; transform: translateY(0) rotate(-22deg) scaleY(0.96); }
+            to { opacity: 0.9; transform: translateY(10px) rotate(-18deg) scaleY(1.04); }
+        }
+
+        .winner-confetti {
+            position: absolute;
+            top: -10px;
+            width: 10px;
+            height: 18px;
+            border-radius: 3px;
+            opacity: 0.95;
+            animation: confettiFall linear forwards;
+            box-shadow: 0 0 10px rgba(255,255,255,0.22);
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translate3d(0, -20px, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translate3d(var(--drift, 0px), 760px, 0) rotate(720deg); opacity: 0; }
+        }
+
+        #winner-broadcast-bar {
+            width: min(92%, 640px);
+            margin-top: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(0, 0, 0, 0.56);
+            box-shadow: 0 0 26px rgba(0,255,135,0.18);
+        }
+
+        #winner-broadcast-track {
+            display: inline-flex;
+            align-items: center;
+            gap: 26px;
+            white-space: nowrap;
+            padding: 10px 18px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: tickerMove 7s linear infinite;
+        }
+
+        #winner-broadcast-track span {
+            color: #00ff87;
+        }
+
+        @keyframes tickerMove {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
         
         #winner-overlay h2 {
             color: #00ff87;
@@ -449,6 +701,21 @@
             margin: 15px 0;
             text-align: center;
             text-shadow: 0 0 30px rgba(0,255,135,0.8);
+        }
+
+        #winner-callout {
+            margin-top: 4px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(0,255,135,0.18), rgba(96,239,255,0.14));
+            border: 1px solid rgba(255,255,255,0.16);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            box-shadow: 0 0 24px rgba(0,255,135,0.18);
         }
         
         #winner-overlay img {
@@ -500,6 +767,8 @@
             <div class="value" id="rule-text">Every 8 seconds the arena must create tension.</div>
         </div>
         
+        <div class="special-mode-banner" id="special-mode-banner"></div>
+        
         <img class="arena-bg" src="./messi-ronaldo-background.png" alt="Messi and Ronaldo rivalry poster">
         <div class="overlay-gradient"></div>
 
@@ -546,9 +815,18 @@
             </div>
 
             <div id="canvas-container">
+                <div id="arena-vfx-layer">
+                    <div id="arena-flash"></div>
+                </div>
+                <div id="elimination-layer"></div>
+                <div id="winner-celebration-layer"></div>
                 <div id="winner-overlay">
                     <img id="winner-flag" src="" />
                     <h2 id="winner-name">CHAMPION!</h2>
+                    <div id="winner-callout">Winner announcement</div>
+                    <div id="winner-broadcast-bar">
+                        <div id="winner-broadcast-track">LIVE ON AIR <span>WINNER ANNOUNCEMENT</span> LIVE ON AIR <span>WINNER ANNOUNCEMENT</span></div>
+                    </div>
                     <p>Preparing next match...</p>
                 </div>
             </div>
@@ -729,10 +1007,12 @@
 
         function speakWinner(countryName) {
             stopCurrentSpeech();
-            const text = `${countryName} wins!`;
+            const text = `And the winner is ${countryName}!`;
             const announcer = document.getElementById('announcer-box');
             if (announcer) announcer.innerText = text;
-            enqueueSpeech(text, 'match', 4);
+            if (!playBrowserSpeech(text, { rate: 0.92, pitch: 1.08, volume: 1 })) {
+                enqueueSpeech(text, 'match', 4);
+            }
         }
 
         function speakSystem(text) {
@@ -748,6 +1028,39 @@
         function pickVoice(preference) {
             const englishVoices = availableVoices.filter(voice => voice.lang && voice.lang.toLowerCase().includes('en'));
             return englishVoices[0] || availableVoices[0] || null;
+        }
+
+        function playBrowserSpeech(text, options = {}) {
+            if (!('speechSynthesis' in window) || !voiceUnlocked) return false;
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            const chosenVoice = pickVoice(options.preference);
+            if (chosenVoice) utterance.voice = chosenVoice;
+            utterance.rate = options.rate || 1;
+            utterance.pitch = options.pitch || 1;
+            utterance.volume = options.volume || 1;
+
+            const generation = ++speechGeneration;
+            currentSpeech = utterance;
+            audioVoice = null;
+            setBgmDuck(true);
+
+            utterance.onend = function() {
+                if (generation !== speechGeneration) return;
+                currentSpeech = null;
+                setBgmDuck(false);
+                processSpeechQueue();
+            };
+            utterance.onerror = function() {
+                if (generation !== speechGeneration) return;
+                currentSpeech = null;
+                setBgmDuck(false);
+                processSpeechQueue();
+            };
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+            return true;
         }
 
         function enqueueSpeech(text, type, priority) {
@@ -867,6 +1180,11 @@
         let holeRadius = 55;
         let freezeUntil = 0;
         let stormShiftAt = 0;
+        let arenaParticles = [];
+        let screenShakePower = 0;
+        let screenShakeUntil = 0;
+        let arenaFlashUntil = 0;
+        let arenaFlashColor = 'rgba(255,255,255,0.55)';
         const RETENTION_RULES = {
             chaosEveryMs: 7000,
             turboAtSeconds: 22,
@@ -886,6 +1204,41 @@
 
         function clamp(value, min, max) {
             return Math.max(min, Math.min(max, value));
+        }
+
+        function triggerArenaFlash(color = 'rgba(255,255,255,0.55)', duration = 180) {
+            arenaFlashColor = color;
+            arenaFlashUntil = Date.now() + duration;
+            const flash = document.getElementById('arena-flash');
+            if (flash) {
+                flash.style.background = `radial-gradient(circle, ${color} 0%, rgba(0,255,135,0.12) 25%, rgba(0,0,0,0) 72%)`;
+                flash.classList.add('active');
+                setTimeout(() => {
+                    if (Date.now() >= arenaFlashUntil && flash) flash.classList.remove('active');
+                }, duration);
+            }
+        }
+
+        function triggerScreenShake(power = 6, duration = 220) {
+            screenShakePower = Math.max(screenShakePower, power);
+            screenShakeUntil = Date.now() + duration;
+        }
+
+        function spawnArenaParticles(x, y, baseColor = '255,255,255', count = 8, strength = 1) {
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 * i / count) + Math.random() * 0.55;
+                const speed = (1.2 + Math.random() * 2.9) * strength;
+                arenaParticles.push({
+                    x,
+                    y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - Math.random() * 1.3,
+                    life: 28 + Math.random() * 22,
+                    maxLife: 28 + Math.random() * 22,
+                    size: 1.6 + Math.random() * 2.8,
+                    color: baseColor
+                });
+            }
         }
 
         function setupHostControls() {
@@ -946,13 +1299,18 @@
                     y: (ball.position.y - cy) * 0.00005
                 });
                 speakSystem(`${ball.country.name} grabbed boost.`);
+                spawnArenaParticles(ball.position.x, ball.position.y, '96,239,255', 10, 1.1);
+                triggerArenaFlash('rgba(96,239,255,0.45)', 140);
             } else if (powerup.type === 'SHIELD') {
                 ball.shieldCharges = (ball.shieldCharges || 0) + 1;
                 speakSystem(`${ball.country.name} picked up a shield.`);
+                spawnArenaParticles(ball.position.x, ball.position.y, '0,255,135', 10, 1);
+                triggerArenaFlash('rgba(0,255,135,0.38)', 140);
             } else if (powerup.type === 'FREEZE') {
                 freezeUntil = now + 3200;
                 speakMatch('Freeze field!');
                 document.getElementById('rule-text').innerText = 'Freeze field activated. The arena slows down.';
+                triggerArenaFlash('rgba(255,255,255,0.42)', 160);
             } else if (powerup.type === 'SURGE') {
                 balls.forEach(other => {
                     if (other === ball || other.isDying) return;
@@ -966,6 +1324,8 @@
                 });
                 hypeMeter = clamp(hypeMeter + 10, 0, 100);
                 speakMatch(`${ball.country.name} triggered a surge!`);
+                spawnArenaParticles(ball.position.x, ball.position.y, '255,183,3', 14, 1.2);
+                triggerScreenShake(5, 180);
             }
 
             document.getElementById('stat-hype').innerText = String(hypeMeter);
@@ -1061,6 +1421,7 @@
                     lastBladeHit: 0,
                     isDying: false, 
                     currentRadius: ballRadius,
+                    trail: [],
                     render: { visible: true }
                 });
 
@@ -1077,7 +1438,158 @@
 
             Events.on(render, 'afterRender', function() {
                 const ctx = render.context;
+                const container = document.getElementById('canvas-container');
+                const shakeAge = screenShakeUntil - Date.now();
+                const shakeFalloff = shakeAge > 0 ? shakeAge / 220 : 0;
+                const shakeX = shakeFalloff > 0 ? (Math.random() - 0.5) * screenShakePower * shakeFalloff : 0;
+                const shakeY = shakeFalloff > 0 ? (Math.random() - 0.5) * screenShakePower * shakeFalloff : 0;
+                if (container) {
+                    container.style.transform = `translate3d(${shakeX.toFixed(2)}px, ${shakeY.toFixed(2)}px, 0)`;
+                }
+                if (shakeAge <= 0) {
+                    screenShakePower = 0;
+                }
+
                 const ringPulse = 0.5 + 0.5 * Math.sin(Date.now() / 280);
+                
+                // DRAW SPECIAL MODE EFFECTS
+                if (activeSpecialMode) {
+                    ctx.save();
+                    const modeAlpha = Math.sin(Date.now() / 200) * 0.15 + 0.15;
+                    
+                    switch(activeSpecialMode) {
+                        case 'TORNADO':
+                            // Spiral overlay
+                            for (let i = 0; i < 8; i++) {
+                                const angle = (Date.now() / 500 + i * Math.PI / 4) % (Math.PI * 2);
+                                const x = cx + Math.cos(angle) * 280;
+                                const y = cy + Math.sin(angle) * 280;
+                                ctx.beginPath();
+                                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                                const grad = ctx.createRadialGradient(x, y, 0, x, y, 20);
+                                grad.addColorStop(0, `rgba(96, 239, 255, ${modeAlpha})`);
+                                grad.addColorStop(1, 'rgba(96, 239, 255, 0)');
+                                ctx.fillStyle = grad;
+                                ctx.fill();
+                            }
+                            break;
+                            
+                        case 'METEOR':
+                            // Falling particles
+                            for (let i = 0; i < 12; i++) {
+                                const x = ((Date.now() / 30 + i * 60) % 720);
+                                const y = ((Date.now() / 50 + i * 40) % 720);
+                                ctx.fillStyle = `rgba(255, 140, 60, ${modeAlpha * 2})`;
+                                ctx.beginPath();
+                                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                                ctx.fill();
+                                // Tail
+                                ctx.strokeStyle = `rgba(255, 200, 100, ${modeAlpha})`;
+                                ctx.lineWidth = 3;
+                                ctx.beginPath();
+                                ctx.moveTo(x, y);
+                                ctx.lineTo(x - 15, y - 15);
+                                ctx.stroke();
+                            }
+                            break;
+                            
+                        case 'LIGHTNING':
+                            // Lightning flash
+                            if (Math.random() < 0.1) {
+                                ctx.fillStyle = `rgba(255, 255, 200, ${modeAlpha * 3})`;
+                                ctx.fillRect(0, 0, width, height);
+                            }
+                            break;
+                            
+                        case 'GRAVITY_FLIP':
+                            // Outward arrows
+                            ctx.strokeStyle = `rgba(240, 93, 251, ${modeAlpha * 2})`;
+                            ctx.lineWidth = 4;
+                            ctx.lineCap = 'round';
+                            for (let i = 0; i < 8; i++) {
+                                const angle = i * Math.PI / 4;
+                                const x1 = cx + Math.cos(angle) * 100;
+                                const y1 = cy + Math.sin(angle) * 100;
+                                const x2 = cx + Math.cos(angle) * 180;
+                                const y2 = cy + Math.sin(angle) * 180;
+                                ctx.beginPath();
+                                ctx.moveTo(x1, y1);
+                                ctx.lineTo(x2, y2);
+                                ctx.stroke();
+                                // Arrowhead
+                                ctx.beginPath();
+                                ctx.moveTo(x2, y2);
+                                ctx.lineTo(x2 - Math.cos(angle - 0.5) * 15, y2 - Math.sin(angle - 0.5) * 15);
+                                ctx.moveTo(x2, y2);
+                                ctx.lineTo(x2 - Math.cos(angle + 0.5) * 15, y2 - Math.sin(angle + 0.5) * 15);
+                                ctx.stroke();
+                            }
+                            break;
+                            
+                        case 'RING_OF_FIRE':
+                            // Fire ring
+                            ctx.beginPath();
+                            ctx.arc(cx, cy, 200, 0, Math.PI * 2);
+                            const fireGrad = ctx.createRadialGradient(cx, cy, 195, cx, cy, 210);
+                            fireGrad.addColorStop(0, `rgba(255, 100, 0, ${modeAlpha * 2})`);
+                            fireGrad.addColorStop(0.5, `rgba(255, 50, 0, ${modeAlpha * 3})`);
+                            fireGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+                            ctx.strokeStyle = fireGrad;
+                            ctx.lineWidth = 30;
+                            ctx.stroke();
+                            // Flickering flames
+                            for (let i = 0; i < 16; i++) {
+                                const angle = (i / 16) * Math.PI * 2 + Date.now() / 1000;
+                                const flicker = Math.sin(Date.now() / 100 + i) * 10;
+                                const x = cx + Math.cos(angle) * (200 + flicker);
+                                const y = cy + Math.sin(angle) * (200 + flicker);
+                                ctx.fillStyle = `rgba(255, ${100 + Math.random() * 100}, 0, ${modeAlpha * 2})`;
+                                ctx.beginPath();
+                                ctx.arc(x, y, 8 + Math.random() * 5, 0, Math.PI * 2);
+                                ctx.fill();
+                            }
+                            break;
+                    }
+                    ctx.restore();
+                }
+                
+                ctx.save();
+                arenaParticles = arenaParticles.filter(p => p.life > 0);
+                for (const particle of arenaParticles) {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    particle.vx *= 0.985;
+                    particle.vy = particle.vy * 0.985 + 0.01;
+                    particle.life -= 1;
+                    const alpha = Math.max(0, particle.life / particle.maxLife);
+                    ctx.fillStyle = `rgba(${particle.color},${alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.size * (0.7 + alpha * 0.8), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                ctx.save();
+                balls.forEach(ball => {
+                    if (!ball.trail || ball.trail.length < 2) return;
+                    const trailAlpha = ball.isDying ? 0.22 : 0.6;
+                    for (let i = 1; i < ball.trail.length; i++) {
+                        const a = ball.trail[i - 1];
+                        const b = ball.trail[i];
+                        const pct = i / ball.trail.length;
+                        ctx.strokeStyle = ball.isDying
+                            ? `rgba(255,107,129,${pct * trailAlpha})`
+                            : `rgba(96,239,255,${pct * trailAlpha})`;
+                        ctx.lineWidth = 1 + pct * 6;
+                        ctx.lineCap = 'round';
+                        ctx.beginPath();
+                        ctx.moveTo(a.x, a.y);
+                        ctx.lineTo(b.x, b.y);
+                        ctx.stroke();
+                    }
+                });
+                ctx.restore();
+
                 const spotlightTarget = balls
                     .filter(ball => !ball.isDying)
                     .reduce((best, ball) => !best || ball.hp < best.hp ? ball : best, null);
@@ -1349,12 +1861,27 @@
             Events.on(engine, 'beforeUpdate', function() {
                 if (roundOver || isPaused) return;
 
+                // UPDATE SPECIAL MODES
+                updateSpecialModes();
+
                 spinnerAngle += spinnerSpeed;
                 Body.setAngle(spinnerBar1, spinnerAngle);
                 Body.setAngle(spinnerBar2, spinnerAngle);
 
                 const now = Date.now();
                 const freezeActive = now < freezeUntil;
+
+                balls.forEach(ball => {
+                    if (!ball.trail) ball.trail = [];
+                    ball.trail.push({ x: ball.position.x, y: ball.position.y });
+                    if (ball.trail.length > 14) ball.trail.shift();
+                });
+
+                if (arenaFlashUntil && now > arenaFlashUntil) {
+                    arenaFlashUntil = 0;
+                    const flash = document.getElementById('arena-flash');
+                    if (flash) flash.classList.remove('active');
+                }
 
                 if (gameSeconds > RETENTION_RULES.turboAtSeconds && !freezeActive) {
                     spinnerSpeed = Math.min(0.028, spinnerSpeed + 0.00004);
@@ -1401,15 +1928,23 @@
                     if (collected) continue;
                 }
 
-                if (!roundOver && balls.length > 1 && now - lastEliminationAt > RETENTION_RULES.stallLimitMs) {
-                    const weakest = balls.reduce((best, ball) => {
-                        if (!best) return ball;
-                        return ball.hp < best.hp ? ball : best;
-                    }, null);
+                if (!roundOver && balls.length > 1) {
+                    const dynamicStallLimit = balls.length <= 4
+                        ? 3600
+                        : balls.length <= 6
+                            ? 5600
+                            : RETENTION_RULES.stallLimitMs;
 
-                    if (weakest && !weakest.isDying) {
-                        lastEliminationAt = now;
-                        triggerDeathSequence(weakest, 'Pressure Break');
+                    if (now - lastEliminationAt > dynamicStallLimit) {
+                        const weakest = balls.reduce((best, ball) => {
+                            if (!best) return ball;
+                            return ball.hp < best.hp ? ball : best;
+                        }, null);
+
+                        if (weakest && !weakest.isDying) {
+                            lastEliminationAt = now;
+                            triggerDeathSequence(weakest, 'Pressure Break');
+                        }
                     }
                 }
 
@@ -1417,7 +1952,8 @@
                     let ball = balls[i];
 
                 if (ball.isDying) {
-                    ball.currentRadius *= 0.96; 
+                    const shrinkRate = balls.length <= 4 || gameSeconds > 75 ? 0.89 : 0.96;
+                    ball.currentRadius *= shrinkRate; 
                     if (ball.currentRadius < 3) {
                         finalizeElimination(ball, ball.causeOfDeath);
                     }
@@ -1460,10 +1996,41 @@
                                 y: (ball.position.y - cy) * 0.01
                             });
                         } else {
-                            ball.hp -= 0.08; 
+                            ball.hp -= balls.length <= 4 || gameSeconds > 75 ? 0.14 : 0.08; 
                             if (ball.hp <= 0 && !ball.isDying) {
                                 triggerDeathSequence(ball, 'Offside Trap');
                             }
+                        }
+                    }
+
+                    if (ball.eliminationStartAt) {
+                        const deathAge = now - ball.eliminationStartAt;
+                        const fastEndgame = balls.length <= 4 || gameSeconds > 75;
+                        const settleWindow = fastEndgame ? 120 : 180;
+                        const fadeWindow = fastEndgame ? 380 : 520;
+                        const vanishWindow = fastEndgame ? 720 : 900;
+                        if (deathAge < settleWindow) {
+                            Body.setVelocity(ball, { x: 0, y: 0 });
+                            Body.setAngularVelocity(ball, 0);
+                        } else if (deathAge < fadeWindow) {
+                            Body.applyForce(ball, ball.position, {
+                                x: (ball.position.x - cx) * (fastEndgame ? 0.00009 : 0.00006),
+                                y: (ball.position.y - cy) * (fastEndgame ? 0.00009 : 0.00006)
+                            });
+                            ball.render.opacity = fastEndgame ? 0.82 : 0.9;
+                            ball.render.strokeStyle = '#ff6b81';
+                            ball.render.lineWidth = 2;
+                        } else {
+                            ball.render.opacity = Math.max(0.06, 1 - (deathAge - fadeWindow) / vanishWindow);
+                            ball.render.lineWidth = 3;
+                        }
+
+                        if (ball.eliminationSpark && deathAge > 90 && !ball.eliminationSparkTriggered) {
+                            ball.eliminationSparkTriggered = true;
+                            Body.applyForce(ball, ball.position, {
+                                x: (Math.random() - 0.5) * 0.012,
+                                y: (Math.random() - 0.5) * 0.012
+                            });
                         }
                     }
 
@@ -1506,6 +2073,9 @@
                                     x: (ball.position.x - cx) * 0.01,
                                     y: (ball.position.y - cy) * 0.01
                                 });
+                                spawnArenaParticles(ball.position.x, ball.position.y, '96,239,255', 8, 0.9);
+                                triggerArenaFlash('rgba(96,239,255,0.35)', 120);
+                                triggerScreenShake(4, 120);
                                 return;
                             }
 
@@ -1519,6 +2089,9 @@
                                 x: (dx / dist) * 0.012,
                                 y: (dy / dist) * 0.012
                             });
+                            spawnArenaParticles(ball.position.x, ball.position.y, '255,107,129', 12, 1);
+                            triggerScreenShake(5, 140);
+                            triggerArenaFlash('rgba(255,107,129,0.38)', 130);
 
                             if (ball.hp <= 0) {
                                 triggerDeathSequence(ball, 'Hard Tackle');
@@ -1533,10 +2106,131 @@
             Runner.run(runner, engine);
         }
 
+        function spawnEliminationEffect(ball, cause) {
+            const layer = document.getElementById('elimination-layer');
+            if (!layer || !ball || !ball.position) return;
+
+            const effect = document.createElement('div');
+            effect.className = 'elim-burst';
+            effect.style.left = `${ball.position.x}px`;
+            effect.style.top = `${ball.position.y}px`;
+
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            tag.textContent = String(cause || 'ELIMINATED').toUpperCase();
+
+            const sparkCount = 5 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < sparkCount; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                const angle = (Math.PI * 2 / sparkCount) * i + Math.random() * 0.35;
+                const radius = 24 + Math.random() * 32;
+                spark.style.transform = `translate(-50%, -50%) translate(${Math.cos(angle) * radius}px, ${Math.sin(angle) * radius}px)`;
+                spark.style.animationDelay = `${Math.random() * 0.08}s`;
+                effect.appendChild(spark);
+            }
+
+            effect.appendChild(tag);
+            layer.appendChild(effect);
+            setTimeout(() => {
+                if (effect && effect.parentNode) effect.parentNode.removeChild(effect);
+            }, 1700);
+        }
+
+        let winnerCelebrationTimer = null;
+
+        function clearWinnerCelebration() {
+            if (winnerCelebrationTimer) {
+                clearInterval(winnerCelebrationTimer);
+                winnerCelebrationTimer = null;
+            }
+            const layer = document.getElementById('winner-celebration-layer');
+            if (layer) {
+                layer.classList.remove('active');
+                layer.innerHTML = '';
+            }
+        }
+
+        function startWinnerCelebration(winningBall) {
+            const layer = document.getElementById('winner-celebration-layer');
+            if (!layer || !winningBall) return;
+
+            layer.innerHTML = '';
+            layer.classList.add('active');
+
+            const left = document.createElement('div');
+            left.className = 'winner-spotlight left';
+            const right = document.createElement('div');
+            right.className = 'winner-spotlight right';
+            layer.appendChild(left);
+            layer.appendChild(right);
+
+            const colors = ['#00ff87', '#60efff', '#ffffff', '#ffb703', '#ff6b81'];
+            const burstCount = 28;
+            for (let i = 0; i < burstCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'winner-confetti';
+                const spread = Math.random() * 720;
+                const drift = (Math.random() - 0.5) * 260;
+                confetti.style.left = `${spread}px`;
+                confetti.style.background = colors[i % colors.length];
+                confetti.style.animationDuration = `${2.8 + Math.random() * 1.8}s`;
+                confetti.style.animationDelay = `${Math.random() * 0.65}s`;
+                confetti.style.setProperty('--drift', `${drift}px`);
+                layer.appendChild(confetti);
+            }
+
+            const burstText = `${winningBall.country.name} CHAMPION`;
+            const track = document.getElementById('winner-broadcast-track');
+            if (track) {
+                track.innerHTML = `LIVE ON AIR <span>${burstText}</span> LIVE ON AIR <span>${burstText}</span>`;
+            }
+
+            if (winnerCelebrationTimer) clearInterval(winnerCelebrationTimer);
+            winnerCelebrationTimer = setInterval(() => {
+                if (!layer || !layer.isConnected) {
+                    clearWinnerCelebration();
+                    return;
+                }
+
+                const extra = document.createElement('div');
+                extra.className = 'winner-confetti';
+                const colors = ['#00ff87', '#60efff', '#ffffff', '#ffb703', '#ff6b81'];
+                extra.style.left = `${Math.random() * 720}px`;
+                extra.style.background = colors[Math.floor(Math.random() * colors.length)];
+                extra.style.animationDuration = `${2.6 + Math.random() * 1.2}s`;
+                extra.style.setProperty('--drift', `${(Math.random() - 0.5) * 300}px`);
+                layer.appendChild(extra);
+                setTimeout(() => {
+                    if (extra && extra.parentNode) extra.parentNode.removeChild(extra);
+                }, 4200);
+            }, 240);
+        }
+
         function triggerDeathSequence(ball, cause) {
+            if (!ball || ball.isDying) return;
             ball.isDying = true;
             ball.causeOfDeath = cause;
+            ball.eliminationStartAt = Date.now();
+            ball.eliminationSpark = true;
+            ball.eliminationSparkTriggered = false;
+            ball.currentRadius = Math.max(ball.currentRadius || 28, 28);
+            ball.render.opacity = 1;
             ball.collisionFilter = { group: -1, category: 2, mask: 0 };
+            Body.setAngularVelocity(ball, (Math.random() - 0.5) * 0.3);
+            Body.setVelocity(ball, {
+                x: (Math.random() - 0.5) * 1.5,
+                y: (Math.random() - 0.5) * 1.5
+            });
+            Body.applyForce(ball, ball.position, {
+                x: (ball.position.x - cx) * 0.008,
+                y: (ball.position.y - cy) * 0.008
+            });
+            spawnEliminationEffect(ball, cause);
+            spawnArenaParticles(ball.position.x, ball.position.y, '255,255,255', 18, 1.4);
+            triggerScreenShake(10, 260);
+            triggerArenaFlash('rgba(255,255,255,0.52)', 220);
+            speakSystem(`${ball.country.name} is on the ropes! ${cause}.`);
         }
 
         function finalizeElimination(ball, cause) {
@@ -1544,6 +2238,22 @@
             if (index > -1) {
                 balls.splice(index, 1);
                 Composite.remove(engine.world, ball);
+
+                balls.forEach(other => {
+                    if (other.isDying) return;
+                    const dx = other.position.x - ball.position.x;
+                    const dy = other.position.y - ball.position.y;
+                    const dist = Math.max(14, Math.sqrt(dx * dx + dy * dy));
+                    if (dist < 170) {
+                        Body.applyForce(other, other.position, {
+                            x: (dx / dist) * 0.015,
+                            y: (dy / dist) * 0.015
+                        });
+                    }
+                });
+                spawnArenaParticles(ball.position.x, ball.position.y, '255,107,129', 20, 1.3);
+                triggerScreenShake(8, 220);
+                triggerArenaFlash('rgba(255,107,129,0.42)', 180);
 
                 const feed = document.getElementById('elimination-feed');
                 const chip = document.createElement('div');
@@ -1581,13 +2291,16 @@
             const overlay = document.getElementById('winner-overlay');
             document.getElementById('winner-flag').src = `https://flagcdn.com/w160/${winningBall.country.code}.png`;
             document.getElementById('winner-name').innerText = `${winningBall.country.name.toUpperCase()} WINS!`;
+            document.getElementById('winner-callout').innerText = `Winner: ${winningBall.country.name}`;
             overlay.style.display = 'flex';
             document.getElementById('rule-text').innerText = `${winningBall.country.name} claimed the cup. New match resets automatically.`;
             hypeMeter = 100;
             document.getElementById('stat-hype').innerText = '100';
+            startWinnerCelebration(winningBall);
 
             setTimeout(() => {
                 overlay.style.display = 'none';
+                clearWinnerCelebration();
                 resetGame();
             }, 6000);
         }
@@ -1643,8 +2356,205 @@
             hp.innerText = `HP ${Math.max(0, Math.ceil(target.hp))}`;
         }
 
+        // SPECIAL GAME MODES SYSTEM
+        let activeSpecialMode = null;
+        let specialModeEndTime = 0;
+        const SPECIAL_MODES = ['TORNADO', 'METEOR', 'LIGHTNING', 'GRAVITY_FLIP', 'RING_OF_FIRE'];
+        
+        function triggerRandomSpecialMode() {
+            if (activeSpecialMode || roundOver || balls.length <= 2) return;
+            
+            const mode = SPECIAL_MODES[Math.floor(Math.random() * SPECIAL_MODES.length)];
+            activeSpecialMode = mode;
+            specialModeEndTime = Date.now() + 8000; // 8 seconds duration
+            
+            const banner = document.getElementById('special-mode-banner');
+            
+            switch(mode) {
+                case 'TORNADO':
+                    speakMatch('Tornado incoming! Everyone spin!');
+                    document.getElementById('rule-text').innerText = '🌪️ TORNADO MODE - Spiral chaos!';
+                    banner.innerText = '🌪️ TORNADO MODE!';
+                    banner.style.background = 'linear-gradient(135deg, rgba(0, 200, 255, 0.95), rgba(0, 100, 200, 0.95))';
+                    break;
+                case 'METEOR':
+                    speakMatch('Meteor shower! Brace for impact!');
+                    document.getElementById('rule-text').innerText = '☄️ METEOR RAIN - Dodge the impacts!';
+                    banner.innerText = '☄️ METEOR RAIN!';
+                    banner.style.background = 'linear-gradient(135deg, rgba(255, 140, 60, 0.95), rgba(255, 80, 0, 0.95))';
+                    break;
+                case 'LIGHTNING':
+                    speakMatch('Lightning storm! Random strikes!');
+                    document.getElementById('rule-text').innerText = '⚡ LIGHTNING STRIKES - Unpredictable danger!';
+                    banner.innerText = '⚡ LIGHTNING STORM!';
+                    banner.style.background = 'linear-gradient(135deg, rgba(255, 255, 100, 0.95), rgba(200, 150, 255, 0.95))';
+                    break;
+                case 'GRAVITY_FLIP':
+                    speakMatch('Gravity flip! Up is down!');
+                    document.getElementById('rule-text').innerText = '🔄 GRAVITY FLIP - Everything reverses!';
+                    banner.innerText = '🔄 GRAVITY FLIP!';
+                    banner.style.background = 'linear-gradient(135deg, rgba(240, 93, 251, 0.95), rgba(150, 0, 255, 0.95))';
+                    break;
+                case 'RING_OF_FIRE':
+                    speakMatch('Ring of fire! Stay near the center!');
+                    document.getElementById('rule-text').innerText = '🔥 RING OF FIRE - Outer ring burns!';
+                    banner.innerText = '🔥 RING OF FIRE!';
+                    banner.style.background = 'linear-gradient(135deg, rgba(255, 0, 0, 0.95), rgba(255, 100, 0, 0.95))';
+                    break;
+            }
+            
+            banner.style.display = 'block';
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 2500);
+            
+            hypeMeter = clamp(hypeMeter + 15, 0, 100);
+            document.getElementById('stat-hype').innerText = String(hypeMeter);
+        }
+        
+        function updateSpecialModes() {
+            if (!activeSpecialMode || Date.now() > specialModeEndTime) {
+                if (activeSpecialMode) {
+                    document.getElementById('rule-text').innerText = 'Special mode ended. Back to normal chaos.';
+                    activeSpecialMode = null;
+                }
+                return;
+            }
+            
+            switch(activeSpecialMode) {
+                case 'TORNADO':
+                    applyTornadoMode();
+                    break;
+                case 'METEOR':
+                    applyMeteorRain();
+                    break;
+                case 'LIGHTNING':
+                    applyLightningStrikes();
+                    break;
+                case 'GRAVITY_FLIP':
+                    applyGravityFlip();
+                    break;
+                case 'RING_OF_FIRE':
+                    applyRingOfFire();
+                    break;
+            }
+        }
+        
+        function applyTornadoMode() {
+            // Spiral force around the center
+            balls.forEach(ball => {
+                if (ball.isDying) return;
+                const dx = ball.position.x - cx;
+                const dy = ball.position.y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 10) return;
+                
+                // Perpendicular force for spiral effect
+                const angle = Math.atan2(dy, dx);
+                const tangentX = -Math.sin(angle);
+                const tangentY = Math.cos(angle);
+                
+                Body.applyForce(ball, ball.position, {
+                    x: tangentX * 0.0008,
+                    y: tangentY * 0.0008
+                });
+            });
+        }
+        
+        let meteorTimer = 0;
+        function applyMeteorRain() {
+            // Random impacts every 500ms
+            const now = Date.now();
+            if (now - meteorTimer < 500) return;
+            meteorTimer = now;
+            
+            const targetBall = balls[Math.floor(Math.random() * balls.length)];
+            if (targetBall && !targetBall.isDying) {
+                const dx = targetBall.position.x - cx;
+                const dy = targetBall.position.y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                Body.applyForce(targetBall, targetBall.position, {
+                    x: (Math.random() - 0.5) * 0.03,
+                    y: (Math.random() - 0.5) * 0.03
+                });
+                
+                targetBall.hp -= 8;
+                if (targetBall.hp <= 0 && !targetBall.isDying) {
+                    triggerDeathSequence(targetBall, 'Meteor Strike');
+                }
+            }
+        }
+        
+        let lightningTimer = 0;
+        function applyLightningStrikes() {
+            // Random lightning every 800ms
+            const now = Date.now();
+            if (now - lightningTimer < 800) return;
+            lightningTimer = now;
+            
+            const victim = balls[Math.floor(Math.random() * balls.length)];
+            if (victim && !victim.isDying) {
+                victim.hp -= 12;
+                
+                // Knockback effect
+                const dx = victim.position.x - cx;
+                const dy = victim.position.y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                Body.applyForce(victim, victim.position, {
+                    x: (dx / dist) * 0.025,
+                    y: (dy / dist) * 0.025
+                });
+                
+                if (victim.hp <= 0 && !victim.isDying) {
+                    triggerDeathSequence(victim, 'Lightning Bolt');
+                }
+            }
+        }
+        
+        function applyGravityFlip() {
+            // Push away from center instead of pull
+            balls.forEach(ball => {
+                if (ball.isDying) return;
+                const dx = ball.position.x - cx;
+                const dy = ball.position.y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 10) return;
+                
+                Body.applyForce(ball, ball.position, {
+                    x: (dx / dist) * 0.0004,
+                    y: (dy / dist) * 0.0004
+                });
+            });
+        }
+        
+        function applyRingOfFire() {
+            // Damage balls far from center
+            balls.forEach(ball => {
+                if (ball.isDying) return;
+                const dx = ball.position.x - cx;
+                const dy = ball.position.y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                // If outside safe zone (beyond 200px from center)
+                if (dist > 200) {
+                    ball.hp -= 0.15;
+                    if (ball.hp <= 0 && !ball.isDying) {
+                        triggerDeathSequence(ball, 'Burned Alive');
+                    }
+                }
+            });
+        }
+
         function applyChaosPulse() {
             if (roundOver || balls.length <= 1) return;
+
+            // 30% chance to trigger special mode instead of normal chaos pulse
+            if (Math.random() < 0.3 && !activeSpecialMode) {
+                triggerRandomSpecialMode();
+                return;
+            }
 
             const target = balls.reduce((best, ball) => {
                 if (!best) return ball;
@@ -1681,6 +2591,10 @@
             holeRadius = 55;
             hypeMeter = 0;
             isPaused = false;
+            arenaParticles = [];
+            screenShakePower = 0;
+            screenShakeUntil = 0;
+            arenaFlashUntil = 0;
             speechQueue = [];
             currentSpeech = null;
             if (audioVoice) {
@@ -1692,6 +2606,11 @@
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
+            clearWinnerCelebration();
+            const flash = document.getElementById('arena-flash');
+            if (flash) flash.classList.remove('active');
+            const container = document.getElementById('canvas-container');
+            if (container) container.style.transform = 'translate3d(0px, 0px, 0)';
             document.getElementById('elimination-feed').innerHTML = '';
             document.getElementById('stat-total').innerText = COUNTRY_DATA.length;
             document.getElementById('stat-remain').innerText = COUNTRY_DATA.length;
