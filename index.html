@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚽ EPIC SOCCER SURVIVAL - Live Comment Chaos!</title>
     <meta name="description" content="Watch 32 countries battle in real-time with live comments, audience reactions, predictions, and chaos-triggering fan messages.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --font-body: 'Manrope', 'Segoe UI', sans-serif;
+            --font-display: 'Sora', 'Manrope', sans-serif;
+        }
+
         * { box-sizing: border-box; }
         body {
             background-color: #000;
@@ -14,7 +22,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+            font-family: var(--font-body);
             overflow: hidden;
         }
 
@@ -60,6 +68,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             color: rgba(255,255,255,0.72);
+            font-family: var(--font-display);
         }
 
         .retention-banner .value {
@@ -67,6 +76,7 @@
             font-weight: 900;
             line-height: 1.2;
             margin-top: 4px;
+            font-family: var(--font-display);
         }
 
         .special-mode-banner {
@@ -153,8 +163,8 @@
             text-align: center;
             padding: 40px;
         }
-        #audio-overlay h1 { color: #00ff87; font-size: 50px; margin-bottom: 20px; }
-        #audio-overlay p { color: #fff; font-size: 26px; line-height: 1.5; }
+        #audio-overlay h1 { color: #00ff87; font-size: 50px; margin-bottom: 20px; font-family: var(--font-display); }
+        #audio-overlay p { color: #fff; font-size: 26px; line-height: 1.5; font-family: var(--font-body); }
         #audio-btn {
             margin-top: 30px;
             background: #00ff87;
@@ -196,6 +206,7 @@
             -webkit-text-fill-color: transparent;
             margin: 0;
             text-shadow: 0 0 30px rgba(0, 255, 135, 0.5);
+            font-family: var(--font-display);
         }
 
         .subtitle {
@@ -203,6 +214,8 @@
             color: #ddd;
             margin-top: 4px;
             letter-spacing: 3px;
+            font-family: var(--font-body);
+            text-transform: uppercase;
         }
 
         /* DUAL SUBTITLE BOXES FOR SEPARATE VOICES */
@@ -223,6 +236,7 @@
             box-shadow: 0 0 20px rgba(0,255,135,0.3);
             letter-spacing: 1px;
             width: 90%;
+            font-family: var(--font-display);
         }
 
         #rule-strip {
@@ -244,6 +258,7 @@
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.08);
             text-align: center;
+            font-family: var(--font-display);
         }
 
         #match-meta {
@@ -268,6 +283,7 @@
             font-size: 14px;
             letter-spacing: 1px;
             text-transform: uppercase;
+            font-family: var(--font-body);
         }
 
         .meta-pill span:last-child {
@@ -1039,9 +1055,9 @@
 
             if (type === 'promo' || /welcome to soccer survival cup/i.test(raw) || /new match starting/i.test(raw)) {
                 return pickCommentaryVariant([
-                    'Welcome to Soccer Survival Cup. The arena is live, the pressure is rising, and every touch can change everything.',
-                    'The match is on. Fast feet, sharp nerves, and one survivor at the end.',
-                    'Welcome in. This is Soccer Survival Cup where momentum shifts in a heartbeat.'
+                    'Welcome to Soccer Survival Cup. The arena is live, the pressure is rising, and every touch can change everything. Like and subscribe for more chaos.',
+                    'The match is on. Fast feet, sharp nerves, and one survivor at the end. Like and subscribe if you love pure drama.',
+                    'Welcome in. This is Soccer Survival Cup where momentum shifts in a heartbeat. Hit like and subscribe for more wild finishes.'
                 ]);
             }
 
@@ -1155,6 +1171,14 @@
                     'Sudden death overtime. One mistake and it is over.',
                     'Extra pressure now. Sudden death has arrived.',
                     'Sudden death overtime. The next touch matters a lot.'
+                ]);
+            }
+
+            if (/like and subscribe/i.test(raw)) {
+                return pickCommentaryVariant([
+                    'Like and subscribe for more epic soccer battles and wild survival moments.',
+                    'If you want more chaos, smash like and subscribe right now.',
+                    'Like and subscribe to catch the next insane finish.'
                 ]);
             }
 
@@ -1500,7 +1524,7 @@
                 audioVoice = null;
                 setBgmDuck(false);
                 if (item.type === 'winner') {
-                    playBrowserSpeech(item.text, { rate: 0.92, pitch: 1.08, volume: 1 });
+                    playBrowserSpeech(item.text, { rate: 0.9, pitch: 1.12, volume: 1, preference: 'female' });
                 }
             };
             voice.play().catch(() => {
@@ -1509,7 +1533,7 @@
                 audioVoice = null;
                 setBgmDuck(false);
                 if (item.type === 'winner') {
-                    playBrowserSpeech(item.text, { rate: 0.92, pitch: 1.08, volume: 1 });
+                    playBrowserSpeech(item.text, { rate: 0.9, pitch: 1.12, volume: 1, preference: 'female' });
                 }
             });
         }
