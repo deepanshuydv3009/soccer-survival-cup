@@ -1097,6 +1097,19 @@
             const announce = String(text || '').trim();
             if (!announce) return;
 
+            const tryBrowserWinnerSpeech = (attempt = 0) => {
+                const delays = [0, 220, 700];
+                const delay = delays[Math.min(attempt, delays.length - 1)];
+                setTimeout(() => {
+                    if (playBrowserSpeech(announce, { rate: 0.92, pitch: 1.08, volume: 1 })) {
+                        return;
+                    }
+                    if (attempt < delays.length - 1) {
+                        tryBrowserWinnerSpeech(attempt + 1);
+                    }
+                }, delay);
+            };
+
             try {
                 const voice = new Audio(`/api/tts?text=${encodeURIComponent(announce)}&v=${Date.now()}`);
                 audioVoice = voice;
@@ -1114,7 +1127,7 @@
                     audioVoice = null;
                     currentSpeech = null;
                     setBgmDuck(false);
-                    playBrowserSpeech(announce, { rate: 0.92, pitch: 1.08, volume: 1 });
+                    tryBrowserWinnerSpeech();
                 };
 
                 await voice.play();
@@ -1122,7 +1135,7 @@
                 audioVoice = null;
                 currentSpeech = null;
                 setBgmDuck(false);
-                playBrowserSpeech(announce, { rate: 0.92, pitch: 1.08, volume: 1 });
+                tryBrowserWinnerSpeech();
             }
         }
 
