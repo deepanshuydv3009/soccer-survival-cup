@@ -1010,9 +1010,7 @@
             const text = `And the winner is ${countryName}!`;
             const announcer = document.getElementById('announcer-box');
             if (announcer) announcer.innerText = text;
-            if (!playBrowserSpeech(text, { rate: 0.92, pitch: 1.08, volume: 1 })) {
-                enqueueSpeech(text, 'match', 4);
-            }
+            enqueueSpeech(text, 'winner', 4);
         }
 
         function speakSystem(text) {
@@ -1147,12 +1145,18 @@
                 currentSpeech = null;
                 audioVoice = null;
                 setBgmDuck(false);
+                if (item.type === 'winner') {
+                    playBrowserSpeech(item.text, { rate: 0.92, pitch: 1.08, volume: 1 });
+                }
             };
             voice.play().catch(() => {
                 if (generation !== speechGeneration) return;
                 currentSpeech = null;
                 audioVoice = null;
                 setBgmDuck(false);
+                if (item.type === 'winner') {
+                    playBrowserSpeech(item.text, { rate: 0.92, pitch: 1.08, volume: 1 });
+                }
             });
         }
 
