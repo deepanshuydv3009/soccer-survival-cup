@@ -1098,12 +1098,7 @@
             if (!announce) return;
 
             try {
-                const response = await fetch(`/api/tts?text=${encodeURIComponent(announce)}`);
-                if (!response.ok) throw new Error(`TTS failed: ${response.status}`);
-
-                const audioBlob = await response.blob();
-                const audioUrl = URL.createObjectURL(audioBlob);
-                const voice = new Audio(audioUrl);
+                const voice = new Audio(`/api/tts?text=${encodeURIComponent(announce)}&v=${Date.now()}`);
                 audioVoice = voice;
                 currentSpeech = voice;
                 setBgmDuck(true);
@@ -1111,13 +1106,11 @@
                 voice.preload = 'auto';
                 voice.volume = 1;
                 voice.onended = function() {
-                    URL.revokeObjectURL(audioUrl);
                     audioVoice = null;
                     currentSpeech = null;
                     setBgmDuck(false);
                 };
                 voice.onerror = function() {
-                    URL.revokeObjectURL(audioUrl);
                     audioVoice = null;
                     currentSpeech = null;
                     setBgmDuck(false);
