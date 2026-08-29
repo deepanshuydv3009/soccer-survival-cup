@@ -926,6 +926,7 @@
                     audioCtx.resume().catch(() => {});
                 }
                 startSoccerBGM();
+                primeWinnerSpeechCache();
             } catch (e) {
                 audioCtx = null;
             }
@@ -1036,59 +1037,61 @@
             enqueueSpeech(text, 'match', 3);
         }
 
-        function speakWinner(countryName) {
+        function speakWinner(countryName, countryCode) {
             stopCurrentSpeech();
             speechQueue = [];
             const text = `And the winner is ${countryName}!`;
             const announcer = document.getElementById('announcer-box');
             if (announcer) announcer.innerText = text;
-            announceWinnerNow(text);
+            announceWinnerNow(text, countryCode);
         }
 
         function buildWinnerSpeechText(countryName) {
             return `And the winner is ${String(countryName || '').trim()}!`;
         }
 
-        function ensureWinnerSpeechAudio() {
-            return winnerSpeechSource;
+        function getWinnerSpeechPath(countryCode) {
+            const cleanCode = String(countryCode || '').trim().toLowerCase();
+            return cleanCode ? `/assets/winner-voice/${cleanCode}.wav` : '';
         }
 
-        async function fetchWinnerSpeechAudioBuffer(text) {
-            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
-            if (!cleanText) return null;
-            if (winnerSpeechCache.has(cleanText)) {
-                return winnerSpeechCache.get(cleanText);
+        async function fetchWinnerSpeechAudioBuffer(countryCode) {
+            const cleanCode = String(countryCode || '').trim().toLowerCase();
+            if (!cleanCode) return null;
+            if (winnerSpeechCache.has(cleanCode)) {
+                return winnerSpeechCache.get(cleanCode);
             }
 
-            const response = await fetch(`/api/tts?text=${encodeURIComponent(cleanText)}&cache=${Date.now()}`);
+            const audioPath = getWinnerSpeechPath(cleanCode);
+            if (!audioPath || !audioCtx) return null;
+
+            const response = await fetch(audioPath);
             if (!response.ok) return null;
 
             const arrayBuffer = await response.arrayBuffer();
-            if (!audioCtx) return null;
-
             const buffer = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
-            winnerSpeechCache.set(cleanText, buffer);
+            winnerSpeechCache.set(cleanCode, buffer);
             return buffer;
         }
 
         function primeWinnerSpeechCache() {
             if (winnerSpeechLoadPromise) return winnerSpeechLoadPromise;
 
-            const phrases = COUNTRY_DATA.map(item => buildWinnerSpeechText(item.name));
+            const phrases = COUNTRY_DATA.map(item => item.code);
             winnerSpeechLoadPromise = Promise.allSettled(
-                phrases.map(async phrase => {
-                    if (winnerSpeechCache.has(phrase)) return;
+                phrases.map(async code => {
+                    if (winnerSpeechCache.has(code)) return;
                     if (!audioCtx) return;
-                    await fetchWinnerSpeechAudioBuffer(phrase);
+                    await fetchWinnerSpeechAudioBuffer(code);
                 })
             ).then(() => null);
 
             return winnerSpeechLoadPromise;
         }
 
-        async function playWinnerSpeech(text) {
-            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
-            if (!cleanText) return false;
+        async function playWinnerSpeech(countryCode) {
+            const cleanCode = String(countryCode || '').trim().toLowerCase();
+            if (!cleanCode) return false;
 
             if (!audioCtx) return false;
             if (audioCtx.state === 'suspended') {
@@ -1097,9 +1100,9 @@
                 } catch (e) {}
             }
 
-            let audioBuffer = winnerSpeechCache.get(cleanText);
+            let audioBuffer = winnerSpeechCache.get(cleanCode);
             if (!audioBuffer) {
-                audioBuffer = await fetchWinnerSpeechAudioBuffer(cleanText);
+                audioBuffer = await fetchWinnerSpeechAudioBuffer(cleanCode);
             }
             if (!audioBuffer) return false;
 
@@ -1181,7 +1184,7 @@
             return true;
         }
 
-        async function announceWinnerNow(text) {
+        async function announceWinnerNow(text, countryCode) {
             if (!voiceUnlocked) return;
 
             const announce = String(text || '').trim();
@@ -1189,7 +1192,7 @@
 
             let winnerStarted = false;
             let browserStarted = false;
-            let bufferStarted = false;
+            let localStarted = false;
             let browserUtterance = null;
             let fallbackTimer = null;
             let settleTimer = null;
@@ -1201,20 +1204,21 @@
                 if (settleTimer) clearTimeout(settleTimer);
             };
 
-            const startAudioWinnerSpeech = async () => {
-                if (winnerStarted || bufferStarted) return false;
-                bufferStarted = true;
+            const startLocalWinnerSpeech = async () => {
+                if (winnerStarted || localStarted) return false;
+                localStarted = true;
 
                 try {
-                    const played = await playWinnerSpeech(announce);
+                    const played = await playWinnerSpeech(countryCode);
                     if (!played || winnerStarted) {
-                        bufferStarted = false;
+                        localStarted = false;
                         return played;
                     }
+                    finishWinnerSpeech();
                     setBgmDuck(true);
                     return true;
                 } catch (error) {
-                    bufferStarted = false;
+                    localStarted = false;
                     if (winnerSpeechSource) {
                         try {
                             winnerSpeechSource.stop();
@@ -1257,13 +1261,13 @@
                 return true;
             };
 
-            startBrowserWinnerSpeech();
+            startLocalWinnerSpeech();
             fallbackTimer = setTimeout(() => {
-                if (!browserStarted) startAudioWinnerSpeech();
-            }, 900);
+                if (!browserStarted && !winnerStarted) startBrowserWinnerSpeech();
+            }, 1400);
             settleTimer = setTimeout(() => {
-                if (!browserStarted) startBrowserWinnerSpeech();
-            }, 1800);
+                if (!browserStarted && !winnerStarted) startBrowserWinnerSpeech();
+            }, 2800);
         }
 
         function enqueueSpeech(text, type, priority) {
@@ -2501,7 +2505,7 @@
         }
 
         function handleWin(winningBall) {
-            speakWinner(winningBall.country.name);
+            speakWinner(winningBall.country.name, winningBall.country.code);
 
             const overlay = document.getElementById('winner-overlay');
             document.getElementById('winner-flag').src = `https://flagcdn.com/w160/${winningBall.country.code}.png`;
