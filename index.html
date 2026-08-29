@@ -885,6 +885,9 @@
         let lastSpeechText = '';
         let bgmMaster = null;
         let speechGeneration = 0;
+        let winnerSpeechCache = new Map();
+        let winnerSpeechLoadPromise = null;
+        let winnerSpeechAudio = null;
 
         // Load voices when available in browser
         function loadVoices() {
@@ -902,6 +905,7 @@
             voiceUnlocked = true;
             const banner = document.getElementById('voice-unlock');
             if (banner) banner.style.display = 'none';
+            primeWinnerSpeechCache();
             if (introSpeechPending) {
                 introSpeechPending = false;
                 processSpeechQueue();
@@ -1042,6 +1046,68 @@
             announceWinnerNow(text);
         }
 
+        function buildWinnerSpeechText(countryName) {
+            return `And the winner is ${String(countryName || '').trim()}!`;
+        }
+
+        function ensureWinnerSpeechAudio() {
+            if (!winnerSpeechAudio) {
+                winnerSpeechAudio = new Audio();
+                winnerSpeechAudio.preload = 'auto';
+                winnerSpeechAudio.playsInline = true;
+            }
+            return winnerSpeechAudio;
+        }
+
+        async function fetchWinnerSpeechAudio(text) {
+            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!cleanText) return null;
+
+            const response = await fetch(`/api/tts?text=${encodeURIComponent(cleanText)}&cache=${Date.now()}`);
+            if (!response.ok) return null;
+
+            const blob = await response.blob();
+            const previousUrl = winnerSpeechCache.get(cleanText);
+            if (previousUrl) URL.revokeObjectURL(previousUrl);
+
+            const objectUrl = URL.createObjectURL(blob);
+            winnerSpeechCache.set(cleanText, objectUrl);
+            return objectUrl;
+        }
+
+        function primeWinnerSpeechCache() {
+            if (winnerSpeechLoadPromise) return winnerSpeechLoadPromise;
+
+            const phrases = COUNTRY_DATA.map(item => buildWinnerSpeechText(item.name));
+            winnerSpeechLoadPromise = Promise.allSettled(
+                phrases.map(async phrase => {
+                    if (winnerSpeechCache.has(phrase)) return;
+                    await fetchWinnerSpeechAudio(phrase);
+                })
+            ).then(() => null);
+
+            return winnerSpeechLoadPromise;
+        }
+
+        async function playWinnerSpeech(text) {
+            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!cleanText) return false;
+
+            let sourceUrl = winnerSpeechCache.get(cleanText);
+            if (!sourceUrl) {
+                sourceUrl = await fetchWinnerSpeechAudio(cleanText);
+            }
+            if (!sourceUrl) return false;
+
+            const voice = ensureWinnerSpeechAudio();
+            voice.pause();
+            voice.currentTime = 0;
+            voice.src = sourceUrl;
+            voice.load();
+            await voice.play();
+            return true;
+        }
+
         function speakSystem(text) {
             enqueueSpeech(text, 'system', 2);
         }
@@ -1109,6 +1175,35 @@
                 if (settleTimer) clearTimeout(settleTimer);
             };
 
+            const startAudioWinnerSpeech = async () => {
+                if (winnerStarted) return false;
+
+                try {
+                    const played = await playWinnerSpeech(announce);
+                    if (!played || winnerStarted) return played;
+                    finishWinnerSpeech();
+                    currentSpeech = ensureWinnerSpeechAudio();
+                    audioVoice = currentSpeech;
+                    setBgmDuck(true);
+                    currentSpeech.onended = function() {
+                        audioVoice = null;
+                        currentSpeech = null;
+                        setBgmDuck(false);
+                    };
+                    currentSpeech.onerror = function() {
+                        audioVoice = null;
+                        currentSpeech = null;
+                        setBgmDuck(false);
+                    };
+                    return true;
+                } catch (error) {
+                    audioVoice = null;
+                    currentSpeech = null;
+                    setBgmDuck(false);
+                    return false;
+                }
+            };
+
             const startBrowserWinnerSpeech = () => {
                 if (!('speechSynthesis' in window)) return false;
 
@@ -1138,44 +1233,13 @@
                 return true;
             };
 
-            const startAudioWinnerSpeech = async () => {
-                if (winnerStarted) return;
-
-                try {
-                    const voice = new Audio(`/api/tts?text=${encodeURIComponent(announce)}&v=${Date.now()}`);
-                    audioVoice = voice;
-                    currentSpeech = voice;
-                    voice.preload = 'auto';
-                    voice.volume = 1;
-                    voice.onplay = function() {
-                        finishWinnerSpeech();
-                        setBgmDuck(true);
-                    };
-                    voice.onended = function() {
-                        audioVoice = null;
-                        currentSpeech = null;
-                        setBgmDuck(false);
-                    };
-                    voice.onerror = function() {
-                        audioVoice = null;
-                        currentSpeech = null;
-                        setBgmDuck(false);
-                    };
-                    await voice.play();
-                } catch (error) {
-                    audioVoice = null;
-                    currentSpeech = null;
-                    setBgmDuck(false);
-                }
-            };
-
-            startBrowserWinnerSpeech();
+            startAudioWinnerSpeech();
             fallbackTimer = setTimeout(() => {
                 if (!winnerStarted) startAudioWinnerSpeech();
-            }, 900);
+            }, 600);
             settleTimer = setTimeout(() => {
-                if (!winnerStarted) startAudioWinnerSpeech();
-            }, 2200);
+                if (!winnerStarted) startBrowserWinnerSpeech();
+            }, 1600);
         }
 
         function enqueueSpeech(text, type, priority) {

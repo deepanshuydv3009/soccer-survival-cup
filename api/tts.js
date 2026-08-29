@@ -21,7 +21,9 @@ export default async function handler(request, response) {
 
     const audio = Buffer.from(await ttsResponse.arrayBuffer());
     response.setHeader('Content-Type', 'audio/mpeg');
-    response.setHeader('Cache-Control', 'public, max-age=3600');
+    response.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+    response.setHeader('Content-Disposition', 'inline; filename="tts.mp3"');
+    response.setHeader('X-Content-Type-Options', 'nosniff');
     response.status(200).send(audio);
   } catch (error) {
     response.status(502).json({ error: 'TTS request failed' });
